@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-from modules.auth import require_login
+from modules.auth import require_active_plan
 from modules.proteomics.missing_value_handler import (
     MissingValueAnalyzer, ProteomicsFilter, Imputer
 )
@@ -24,7 +24,7 @@ from modules.transcriptomics.plots import PlotFactory
 from modules.transcriptomics.result_display import display_results_table
 from modules.transcriptomics.pdf_report import generate_pdf_report
 
-require_login()
+require_active_plan()
 
 st.title("🧪 Proteomics")
 

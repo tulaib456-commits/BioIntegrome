@@ -34,9 +34,9 @@ from modules.transcriptomics.enrichment import (
     ENRICHR_LIBRARIES,
     SUPPORTED_ORGANISMS
 )
-from modules.auth import require_login
+from modules.auth import require_active_plan
 
-require_login()
+require_active_plan()
 import os
 import tempfile
 
@@ -115,7 +115,7 @@ with tabs[0]:
 
             dataset_path = tmp.name
 
-        storage = DatasetStorage()
+        storage = DatasetStorage(st.session_state.logged_in_user["id"])
 
         logger = BioAILogger()
 
@@ -1070,6 +1070,7 @@ with tabs[7]:
                                     best_model, select_k=st.session_state.ml_select_k
                                 )
                                 path = save_classical_model(
+                                    st.session_state.logged_in_user["id"],
                                     final_pipeline, save_name,
                                     metadata={"model_type": best_model, "classes": ml.class_summary().to_dict()}
                                 )
@@ -1081,10 +1082,12 @@ with tabs[7]:
                                 if dnn_fit_error:
                                     st.warning(dnn_fit_error)
                                 else:
-                                    model_path, aux_path = save_dnn_model(bundle, save_name)
+                                    model_path, aux_path = save_dnn_model(
+                                        st.session_state.logged_in_user["id"], bundle, save_name
+                                    )
                                     st.success(f"Saved to {model_path}")
 
-                        saved = list_saved_models()
+                        saved = list_saved_models(st.session_state.logged_in_user["id"])
                         if saved:
                             st.caption(f"Saved models: {', '.join(saved)}")
 

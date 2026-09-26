@@ -1,0 +1,12 @@
+# This file is SAFE to commit to GitHub -- it holds no secrets.
+# Do not put SUPABASE_KEY, SUPABASE_URL, or SENTRY_DSN in this file;
+# those stay in .streamlit/secrets.toml (gitignored) locally, and in
+# the Streamlit Cloud / Render secrets UI for deployed copies.
+
+[server]
+maxUploadSize = 100
+enableXsrfProtection = true
+enableCORS = true
+
+[client]
+toolbarMode = "viewer"

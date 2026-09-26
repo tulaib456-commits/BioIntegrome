@@ -1,3 +1,4 @@
+import os
 import subprocess
 import sys
 import importlib
@@ -17,6 +18,7 @@ REQUIRED_PACKAGES = {
     "gseapy": "gseapy",
 }
 
+
 def ensure_packages():
     for import_name, pip_name in REQUIRED_PACKAGES.items():
         try:
@@ -33,19 +35,43 @@ def ensure_packages():
     except Exception:
         pass
 
-ensure_packages()
+
+# This auto-install step exists as a safety net for local development,
+# where you might forget to run `pip install -r requirements.txt`
+# yourself. It should NOT run on Streamlit Cloud or Render -- both
+# platforms already install everything in requirements.txt before your
+# app starts, so this just wastes startup time there, and silently
+# installing packages at runtime in production is best avoided. Set
+# the environment variable BIOAI_SKIP_AUTOINSTALL=1 in both platforms'
+# secrets/environment settings to turn this off.
+if os.environ.get("BIOAI_SKIP_AUTOINSTALL") != "1":
+    ensure_packages()
 
 from modules.auth import require_login, sign_out, get_secret
+from modules.transcriptomics.storage import purge_old_uploads
 import sentry_sdk
 
 sentry_sdk.init(
     dsn=get_secret("SENTRY_DSN"),
     traces_sample_rate=0.1,
+    # Without these two, Sentry's defaults can attach request/user
+    # details and local variable values (which may include a slice of
+    # a user's dataset) to error reports. Keep both False.
+    send_default_pii=False,
+    include_local_variables=False,
 )
 
+# Cheap housekeeping: delete any user's temporary upload folder that
+# hasn't been touched in 24 hours, so abandoned sessions don't slowly
+# fill the server's disk. Safe to run on every app start.
+try:
+    purge_old_uploads(max_age_hours=24)
+except Exception:
+    pass
+
 st.set_page_config(
-    page_title="BioAI", 
-    page_icon="🧬", 
+    page_title="BioAI",
+    page_icon="🧬",
     layout="wide")
 
 require_login()
