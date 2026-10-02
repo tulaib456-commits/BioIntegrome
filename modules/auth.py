@@ -224,8 +224,8 @@ def has_active_plan(user_id):
     return expiry > datetime.now(timezone.utc)
 
 
-def require_active_plan(payment_link="[add your Payoneer payment link]",
-                         contact_email="[add your email]"):
+def require_active_plan(payment_link="[https://link.payoneer.com/Token?t=32224DAB6AF240F9BE7697903E85CB51&src=pl]",
+                         contact_email="[tulaib456@gmail.com]"):
     """
     Call this as the FIRST line of every page that should be paid-only
     (Transcriptomics, Proteomics, and any future module), IN PLACE OF
