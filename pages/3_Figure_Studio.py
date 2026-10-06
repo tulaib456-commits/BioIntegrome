@@ -42,21 +42,21 @@ if uploaded is not None:
     col1, col2 = st.columns(2)
 
     with col1:
-    palette_name = st.selectbox(
-        "Color Palette", list(PALETTES.keys()) + ["Custom..."]
-    )
+        palette_name = st.selectbox(
+            "Color Palette", list(PALETTES.keys()) + ["Custom..."]
+        )
 
-    if palette_name == "Custom...":
-        n_colors = st.slider("Number of colors", 2, 8, 3)
-        custom_colors = []
-        cols = st.columns(n_colors)
-        for i in range(n_colors):
-            with cols[i]:
-                color = st.color_picker(f"Color {i+1}", "#1f77b4", key=f"custom_color_{i}")
-                custom_colors.append(color)
-        active_palette = custom_colors
-    else:
-        active_palette = PALETTES[palette_name]
+        if palette_name == "Custom...":
+            n_colors = st.slider("Number of colors", 2, 8, 3)
+            custom_colors = []
+            inner_cols = st.columns(n_colors)
+            for i in range(n_colors):
+                with inner_cols[i]:
+                    color = st.color_picker(f"Color {i+1}", "#1f77b4", key=f"custom_color_{i}")
+                    custom_colors.append(color)
+            active_palette = custom_colors
+        else:
+            active_palette = PALETTES[palette_name]
     with col2:
         theme_name = st.selectbox("Theme", list(THEMES.keys()))
 
@@ -122,37 +122,7 @@ if uploaded is not None:
         fig = builder.grouped_comparison_with_stats(
             value_col, group_col, active_palette, title=title, plot_type=sub_type
         )
-    elif plot_type == "Kaplan-Meier Survival Curve":
-        duration_col = st.selectbox("Duration/Time column", numeric_cols, key="km_dur")
-        event_col = st.selectbox("Event column (1=event, 0=censored)", numeric_cols, key="km_ev")
-        group_col = st.selectbox("Group by (optional)", [None] + categorical_cols, key="km_grp")
-        fig, log_rank_result = builder.kaplan_meier_plot(duration_col, event_col, group_col, active_palette, title=title)
-        if log_rank_result:
-            st.caption(f"Log-rank test: chi²={log_rank_result['chi_square']:.2f}, p={log_rank_result['p_value']:.4f}")
 
-    elif plot_type == "Forest Plot":
-        label_col = st.selectbox("Label column", categorical_cols, key="fp_label")
-        estimate_col = st.selectbox("Estimate column", numeric_cols, key="fp_est")
-        ci_lower_col = st.selectbox("CI Lower column", numeric_cols, key="fp_lo")
-        ci_upper_col = st.selectbox("CI Upper column", numeric_cols, key="fp_hi")
-        fig = builder.forest_plot(label_col, estimate_col, ci_lower_col, ci_upper_col, title=title)
-
-    elif plot_type == "Venn Diagram (2-set)":
-        set_col = st.selectbox("Category column", categorical_cols, key="venn_col")
-        item_col = st.selectbox("Item/ID column", categorical_cols + numeric_cols, key="venn_item")
-        categories = df[set_col].dropna().unique().tolist()
-        if len(categories) >= 2:
-            cat_a = st.selectbox("Set A", categories, index=0, key="venn_a")
-            cat_b = st.selectbox("Set B", categories, index=1, key="venn_b")
-            set_a = set(df[df[set_col] == cat_a][item_col])
-            set_b = set(df[df[set_col] == cat_b][item_col])
-            fig = builder.venn_diagram_2set(set_a, set_b, str(cat_a), str(cat_b), title=title)
-
-    elif plot_type == "Paired/Connected Dot Plot":
-        id_col = st.selectbox("Subject/ID column", categorical_cols, key="pd_id")
-        time_col = st.selectbox("Time/Condition column", categorical_cols, key="pd_time")
-        value_col = st.selectbox("Value column", numeric_cols, key="pd_val")
-        fig = builder.paired_dot_plot(id_col, time_col, value_col, active_palette, title=title)
 
     if fig is not None:
 
