@@ -340,9 +340,13 @@ class FigureBuilder:
 
     def customize_layout(self, fig, x_axis_title=None, y_axis_title=None,
                          x_tick_font_size=12, y_tick_font_size=12,
-                         axis_title_font_size=16, legend_title=None,
-                         legend_position="right", show_legend=True,
+                         axis_title_font_size=16, axis_title_bold=False,
+                         axis_title_color="black", tick_color="black",
+                         legend_title=None, legend_position="right", show_legend=True,
                          x_range=None, y_range=None, width=None, height=None,
+                         x_scale="linear", y_scale="linear",
+                         title_text=None, title_bold=True, title_font_size=20,
+                         title_position="center",
                          margin_l=80, margin_r=40, margin_t=60, margin_b=80):
 
         legend_positions = {
@@ -350,6 +354,7 @@ class FigureBuilder:
             "top": dict(x=0.5, y=1.1, xanchor="center", orientation="h"),
             "bottom": dict(x=0.5, y=-0.2, xanchor="center", orientation="h"),
         }
+        title_x_map = {"left": 0.02, "center": 0.5, "right": 0.98}
 
         fig.update_layout(
             showlegend=show_legend,
@@ -357,12 +362,32 @@ class FigureBuilder:
             margin=dict(l=margin_l, r=margin_r, t=margin_t, b=margin_b)
         )
 
+        if title_text is not None:
+            title_display = f"<b>{title_text}</b>" if title_bold else title_text
+            fig.update_layout(
+                title=dict(
+                    text=title_display, font=dict(size=title_font_size),
+                    x=title_x_map.get(title_position, 0.5)
+                )
+            )
+
+        x_title_display = f"<b>{x_axis_title}</b>" if (x_axis_title and axis_title_bold) else x_axis_title
+        y_title_display = f"<b>{y_axis_title}</b>" if (y_axis_title and axis_title_bold) else y_axis_title
+
         if x_axis_title is not None:
-            fig.update_xaxes(title_text=x_axis_title, title_font=dict(size=axis_title_font_size),
-                             tickfont=dict(size=x_tick_font_size))
+            fig.update_xaxes(
+                title_text=x_title_display,
+                title_font=dict(size=axis_title_font_size, color=axis_title_color),
+                tickfont=dict(size=x_tick_font_size, color=tick_color),
+                type="log" if x_scale == "log" else "linear"
+            )
         if y_axis_title is not None:
-            fig.update_yaxes(title_text=y_axis_title, title_font=dict(size=axis_title_font_size),
-                             tickfont=dict(size=y_tick_font_size))
+            fig.update_yaxes(
+                title_text=y_title_display,
+                title_font=dict(size=axis_title_font_size, color=axis_title_color),
+                tickfont=dict(size=y_tick_font_size, color=tick_color),
+                type="log" if y_scale == "log" else "linear"
+            )
         if x_range:
             fig.update_xaxes(range=x_range)
         if y_range:

@@ -161,7 +161,20 @@ if uploaded is not None:
                 width=export_width, height=export_height
             )
 
-        st.plotly_chart(fig, use_container_width=True, key="figure_studio_main")
+        st.plotly_chart(
+            fig, use_container_width=True, key="figure_studio_main",
+            config={
+                "toImageButtonOptions": {
+                    "format": "png", "filename": "figure",
+                    "height": 1200, "width": 1800, "scale": 3
+                },
+                "displaylogo": False
+            }
+        )
+        st.caption(
+            "💡 Use the camera icon in the top-right of the chart above "
+            "for a reliable, instant PNG export — no server processing needed."
+        )
 
         st.divider()
         st.subheader("Export")
@@ -196,6 +209,13 @@ if uploaded is not None:
                 f"Download {ext.upper()}", data_bytes,
                 file_name=f"figure.{ext}", mime=mime
             )
+            except Exception as error:
+                st.error(
+                    "Server-side export failed — this is a known issue with "
+                    "the cloud environment's Chrome sandbox, not your figure. "
+                    "Use the camera icon on the chart above for a reliable PNG, "
+                    "or right-click → 'Save image as' on the chart."
+                )
 
     st.divider()
     with st.expander("Run a Statistical Test (SPSS-style report)", expanded=False):
