@@ -337,3 +337,39 @@ class FigureBuilder:
         )
 
         return fig
+
+    def customize_layout(self, fig, x_axis_title=None, y_axis_title=None,
+                         x_tick_font_size=12, y_tick_font_size=12,
+                         axis_title_font_size=16, legend_title=None,
+                         legend_position="right", show_legend=True,
+                         x_range=None, y_range=None, width=None, height=None,
+                         margin_l=80, margin_r=40, margin_t=60, margin_b=80):
+
+        legend_positions = {
+            "right": dict(x=1.02, y=1, xanchor="left"),
+            "top": dict(x=0.5, y=1.1, xanchor="center", orientation="h"),
+            "bottom": dict(x=0.5, y=-0.2, xanchor="center", orientation="h"),
+        }
+
+        fig.update_layout(
+            showlegend=show_legend,
+            legend=dict(title=legend_title, **legend_positions.get(legend_position, {})),
+            margin=dict(l=margin_l, r=margin_r, t=margin_t, b=margin_b)
+        )
+
+        if x_axis_title is not None:
+            fig.update_xaxes(title_text=x_axis_title, title_font=dict(size=axis_title_font_size),
+                             tickfont=dict(size=x_tick_font_size))
+        if y_axis_title is not None:
+            fig.update_yaxes(title_text=y_axis_title, title_font=dict(size=axis_title_font_size),
+                             tickfont=dict(size=y_tick_font_size))
+        if x_range:
+            fig.update_xaxes(range=x_range)
+        if y_range:
+            fig.update_yaxes(range=y_range)
+        if width:
+            fig.update_layout(width=width)
+        if height:
+            fig.update_layout(height=height)
+
+        return fig

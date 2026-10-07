@@ -35,6 +35,15 @@ def ensure_packages():
     except Exception:
         pass
 
+def ensure_chrome_for_kaleido():
+    try:
+        import kaleido
+        kaleido.get_chrome_sync()
+    except Exception:
+        pass
+
+ensure_chrome_for_kaleido()
+
 
 # This auto-install step exists as a safety net for local development,
 # where you might forget to run `pip install -r requirements.txt`
