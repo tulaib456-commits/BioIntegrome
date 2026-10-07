@@ -133,32 +133,53 @@ if uploaded is not None:
         st.divider()
         with st.expander("Customize Axes, Fonts & Layout", expanded=False):
 
+            custom_title = st.text_input("Figure Title")
+            col_t1, col_t2, col_t3 = st.columns(3)
+            with col_t1:
+                title_bold = st.checkbox("Bold Title", value=True)
+            with col_t2:
+                title_size = st.slider("Title Font Size", 10, 36, 20)
+            with col_t3:
+                title_pos = st.selectbox("Title Position", ["left", "center", "right"], index=1)
+
             col_a, col_b = st.columns(2)
             with col_a:
-                custom_x_title = st.text_input("X Axis Title (leave blank to keep default)")
+                custom_x_title = st.text_input("X Axis Title")
                 x_tick_size = st.slider("X Tick Font Size", 8, 24, 12)
+                x_scale = st.selectbox("X Axis Scale", ["linear", "log"])
             with col_b:
-                custom_y_title = st.text_input("Y Axis Title (leave blank to keep default)")
+                custom_y_title = st.text_input("Y Axis Title")
                 y_tick_size = st.slider("Y Tick Font Size", 8, 24, 12)
+                y_scale = st.selectbox("Y Axis Scale", ["linear", "log"])
 
-            axis_title_size = st.slider("Axis Title Font Size", 10, 30, 16)
+            col_c, col_d, col_e = st.columns(3)
+            with col_c:
+                axis_title_size = st.slider("Axis Title Font Size", 10, 30, 16)
+            with col_d:
+                axis_bold = st.checkbox("Bold Axis Titles", value=False)
+            with col_e:
+                axis_color = st.color_picker("Axis Title Color", "#000000")
+
             legend_position = st.selectbox("Legend Position", ["right", "top", "bottom"])
             show_legend = st.checkbox("Show Legend", value=True)
 
-            col_c, col_d = st.columns(2)
-            with col_c:
+            col_f, col_g = st.columns(2)
+            with col_f:
                 export_width = st.number_input("Figure Width (px)", 400, 3000, 1200)
-            with col_d:
+            with col_g:
                 export_height = st.number_input("Figure Height (px)", 300, 3000, 800)
 
             fig = builder.customize_layout(
                 fig,
-                x_axis_title=custom_x_title or None,
-                y_axis_title=custom_y_title or None,
+                x_axis_title=custom_x_title or None, y_axis_title=custom_y_title or None,
                 x_tick_font_size=x_tick_size, y_tick_font_size=y_tick_size,
-                axis_title_font_size=axis_title_size,
+                axis_title_font_size=axis_title_size, axis_title_bold=axis_bold,
+                axis_title_color=axis_color,
                 legend_position=legend_position, show_legend=show_legend,
-                width=export_width, height=export_height
+                width=export_width, height=export_height,
+                x_scale=x_scale, y_scale=y_scale,
+                title_text=custom_title or None, title_bold=title_bold,
+                title_font_size=title_size, title_position=title_pos
             )
 
         st.plotly_chart(
@@ -175,11 +196,18 @@ if uploaded is not None:
             "💡 Use the camera icon in the top-right of the chart above "
             "for a reliable, instant PNG export — no server processing needed."
         )
-
         st.divider()
         st.subheader("Export")
 
-        export_format = st.selectbox("Format", ["PNG (300 DPI)", "SVG (vector, editable)", "PDF"])
+        st.caption(
+            "💡 Easiest: use the camera icon at the top-right of the chart "
+            "above for an instant high-res PNG. The options below are for "
+            "SVG/PDF (vector formats), which need server-side processing."
+        )
+
+        export_format = st.selectbox(
+            "Format", ["SVG (vector, editable)", "PDF", "PNG (300 DPI)"]
+        )
 
         if st.button("Generate Export File"):
 
@@ -201,7 +229,11 @@ if uploaded is not None:
                     st.session_state.figure_studio_export = (f.read(), mime, ext)
 
             except Exception as error:
-                st.error(f"Export failed: {error}")
+                st.error(
+                    "Server-side export failed — this is a known issue with "
+                    "the cloud environment's Chrome sandbox, not your figure. "
+                    "Use the camera icon on the chart above for a reliable PNG."
+                )
 
         if st.session_state.get("figure_studio_export"):
             data_bytes, mime, ext = st.session_state.figure_studio_export
@@ -209,13 +241,6 @@ if uploaded is not None:
                 f"Download {ext.upper()}", data_bytes,
                 file_name=f"figure.{ext}", mime=mime
             )
-            except Exception as error:
-                st.error(
-                    "Server-side export failed — this is a known issue with "
-                    "the cloud environment's Chrome sandbox, not your figure. "
-                    "Use the camera icon on the chart above for a reliable PNG, "
-                    "or right-click → 'Save image as' on the chart."
-                )
 
     st.divider()
     with st.expander("Run a Statistical Test (SPSS-style report)", expanded=False):
