@@ -338,10 +338,33 @@ class FigureBuilder:
 
         return fig
 
+    @staticmethod
+    def _axis_is_numeric(fig, axis):
+        """
+        True only if every trace's data on this axis is numeric, so a
+        log scale makes sense. Text categories, dates and heatmap labels
+        return False (forcing a log/linear type on those makes the plot vanish).
+        """
+        found = False
+        for trace in fig.data:
+            values = getattr(trace, axis, None)
+            if values is None:
+                continue
+            try:
+                arr = np.asarray(values)
+            except Exception:
+                return False
+            if arr.size == 0:
+                continue
+            if not np.issubdtype(arr.dtype, np.number):
+                return False
+            found = True
+        return found
+
     def customize_layout(self, fig, x_axis_title=None, y_axis_title=None,
                          x_tick_font_size=12, y_tick_font_size=12,
                          axis_title_font_size=16, axis_title_bold=False,
-                         axis_title_color="black", tick_color="black",
+                         axis_title_color="black", tick_color=None,
                          legend_title=None, legend_position="right", show_legend=True,
                          x_range=None, y_range=None, width=None, height=None,
                          x_scale="linear", y_scale="linear",
@@ -371,23 +394,37 @@ class FigureBuilder:
                 )
             )
 
-        x_title_display = f"<b>{x_axis_title}</b>" if (x_axis_title and axis_title_bold) else x_axis_title
-        y_title_display = f"<b>{y_axis_title}</b>" if (y_axis_title and axis_title_bold) else y_axis_title
+        # Tick fonts always apply, so the tick-size sliders work even
+        # when no axis title was typed.
+        tick_font_x = dict(size=x_tick_font_size)
+        tick_font_y = dict(size=y_tick_font_size)
+        if tick_color:
+            tick_font_x["color"] = tick_color
+            tick_font_y["color"] = tick_color
+        fig.update_xaxes(tickfont=tick_font_x)
+        fig.update_yaxes(tickfont=tick_font_y)
 
-        if x_axis_title is not None:
+        if x_axis_title:
+            x_title_display = f"<b>{x_axis_title}</b>" if axis_title_bold else x_axis_title
             fig.update_xaxes(
                 title_text=x_title_display,
-                title_font=dict(size=axis_title_font_size, color=axis_title_color),
-                tickfont=dict(size=x_tick_font_size, color=tick_color),
-                type="log" if x_scale == "log" else "linear"
+                title_font=dict(size=axis_title_font_size, color=axis_title_color)
             )
-        if y_axis_title is not None:
+        if y_axis_title:
+            y_title_display = f"<b>{y_axis_title}</b>" if axis_title_bold else y_axis_title
             fig.update_yaxes(
                 title_text=y_title_display,
-                title_font=dict(size=axis_title_font_size, color=axis_title_color),
-                tickfont=dict(size=y_tick_font_size, color=tick_color),
-                type="log" if y_scale == "log" else "linear"
+                title_font=dict(size=axis_title_font_size, color=axis_title_color)
             )
+
+        # The axis type is touched ONLY when the user asks for a log scale
+        # AND the axis is numeric. Otherwise Plotly keeps its own
+        # auto-detected type (category / date / linear).
+        if x_scale == "log" and self._axis_is_numeric(fig, "x"):
+            fig.update_xaxes(type="log")
+        if y_scale == "log" and self._axis_is_numeric(fig, "y"):
+            fig.update_yaxes(type="log")
+
         if x_range:
             fig.update_xaxes(range=x_range)
         if y_range:
@@ -397,4 +434,4 @@ class FigureBuilder:
         if height:
             fig.update_layout(height=height)
 
-        return fig
+        return fig    
