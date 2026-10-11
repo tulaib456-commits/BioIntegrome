@@ -18,6 +18,7 @@ from modules.transcriptomics.group_assignment import group_assignment_widget
 from modules.transcriptomics.enrichment import EnrichmentAnalysis, ENRICHR_LIBRARIES, SUPPORTED_ORGANISMS
 from modules.transcriptomics.feature_builder import FeatureBuilder
 from modules.transcriptomics.ml_classifier import MLClassifier
+from modules.figure_studio.plot_editor import render_editable_plot
 from modules.transcriptomics.dnn_classifier import DNNClassifier
 from modules.transcriptomics.model_interpretation import ROCAnalysis, ModelInterpreter
 from modules.transcriptomics.plots import PlotFactory
@@ -59,7 +60,7 @@ with tabs[0]:
 
         st.session_state.proteomics_dataset = data
         st.success(f"Uploaded: {len(data)} proteins, {len(data.columns) - 1} samples")
-        st.dataframe(data.head())
+        display_results_table(data, "prot_upload", default_index=4)
 
 with tabs[1]:
 
@@ -113,7 +114,7 @@ with tabs[1]:
                 )
 
         if st.session_state.proteomics_filtered is not None:
-            st.dataframe(st.session_state.proteomics_filtered.head())
+            display_results_table(st.session_state.proteomics_filtered, "prot_filtered", default_index=4)
 
     else:
         st.info("Upload a dataset first.")
@@ -140,7 +141,7 @@ with tabs[2]:
                 st.session_state.proteomics_normalized = normalizer.quantile_normalization()
 
         if st.session_state.proteomics_normalized is not None:
-            st.dataframe(st.session_state.proteomics_normalized.head())
+            display_results_table(st.session_state.proteomics_normalized, "prot_normalized", default_index=4)
 
     else:
         st.info("Complete Missing Value handling first.")
@@ -192,12 +193,12 @@ with tabs[3]:
                 display_results_table(de_results, "prot_de")
 
                 plot_factory = PlotFactory(de.df)
-                st.plotly_chart(plot_factory.volcano_plot(de_results), use_container_width=True, key="prot_volcano")
+                render_editable_plot(plot_factory.volcano_plot(de_results), "tx_volcano", default_title="Volcano plot")
 
                 st.subheader("PCA")
                 pca_group_map = {s: "Group A" for s in group_a}
                 pca_group_map.update({s: "Group B" for s in group_b})
-                st.plotly_chart(plot_factory.pca_plot(pca_group_map), use_container_width=True, key="prot_pca")
+                render_editable_plot(plot_factory.pca_plot(pca_group_map), "prot_pca", default_title="PCA plot")
 
         else:
 
@@ -217,7 +218,8 @@ with tabs[3]:
 
                 st.subheader("Inspect a Protein")
 
-                top_proteins = anova_results.head(30)[anova_results.columns[0]].tolist()
+                n_top = st.selectbox("How many proteins to list", [10, 30, 50, 100, 500], index=1, key="prot_top_n")
+                top_proteins = anova_results.head(n_top)[anova_results.columns[0]].tolist()
 
                 selected_protein = st.selectbox(
                     "Choose a significant protein to inspect",
@@ -243,18 +245,20 @@ with tabs[3]:
 
                     if expr_rows:
                         expr_matrix = pd.DataFrame(expr_rows, index=multi_proteins)
-                        st.plotly_chart(
+                        render_editable_plot(
                             plot_factory.top_genes_heatmap(expr_matrix),
-                            use_container_width=True, key="prot_anova_heatmap"
+                            "prot_anova_heatmap",
+                            default_title="Heatmap of Top Genes"
                         )
 
                 if selected_protein:
 
                     expression_table = mgde.gene_expression_table(selected_protein)
 
-                    st.plotly_chart(
+                    render_editable_plot(
                         plot_factory.gene_boxplot(expression_table, selected_protein),
-                        use_container_width=True, key="prot_anova_box"
+                        "prot_anova_box",
+                        default_title="Boxplot of Gene Expression"
                     )
 
                     st.caption("Tukey HSD pairwise comparison:")
@@ -289,7 +293,7 @@ with tabs[4]:
                 display_results_table(results, "prot_enrichment", long_text_columns=["Matched_Genes", "Pathway"])
 
                 plot_factory = PlotFactory(st.session_state.proteomics_normalized)
-                st.plotly_chart(plot_factory.enrichment_bar_plot(results), use_container_width=True, key="prot_enrich_bar")
+                render_editable_plot(plot_factory.enrichment_bar_plot(results), "prot_enrich_bar", default_title="Enrichment Bar Plot")
 
     else:
         st.info("Run Differential Expression first.")
@@ -347,16 +351,16 @@ with tabs[5]:
 
                 cm = ml.confusion_matrix_cv(best_model)
                 plot_factory = PlotFactory(data)
-                st.plotly_chart(plot_factory.confusion_matrix_heatmap(cm), use_container_width=True, key="prot_cm")
+                render_editable_plot(plot_factory.confusion_matrix_heatmap(cm), "prot_cm", default_title="Confusion Matrix")
 
                 roc_analysis = ROCAnalysis(ml, best_model)
                 curves = roc_analysis.curves()
 
                 col_roc, col_pr = st.columns(2)
                 with col_roc:
-                    st.plotly_chart(plot_factory.roc_curve_plot(curves), use_container_width=True, key="prot_roc")
+                    render_editable_plot(plot_factory.roc_curve_plot(curves), "prot_roc", default_title="ROC Curve")
                 with col_pr:
-                    st.plotly_chart(plot_factory.pr_curve_plot(curves), use_container_width=True, key="prot_pr")
+                    render_editable_plot(plot_factory.pr_curve_plot(curves), "prot_pr", default_title="Precision-Recall Curve")
 
                 if st.button("Compute SHAP Importance", key="prot_shap_btn"):
                     final_pipeline = ml.fit_final_model(best_model)
@@ -367,8 +371,8 @@ with tabs[5]:
                         st.warning(shap_error)
                     else:
                         importance = interpreter.importance_table(shap_values)
-                        st.dataframe(importance.head(20))
-                        st.plotly_chart(plot_factory.shap_importance_plot(importance), use_container_width=True, key="prot_shap")
+                        display_results_table(importance, "prot_shap_importance", default_index=1)
+                        render_editable_plot(plot_factory.shap_importance_plot(importance), "prot_shap", default_title="SHAP Importance")
 
     else:
         st.info("Run Differential Expression first.")

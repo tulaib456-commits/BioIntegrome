@@ -8,6 +8,7 @@ from modules.transcriptomics.result_display import display_results_table
 from modules.transcriptomics.group_assignment import group_assignment_widget
 from modules.transcriptomics.feature_builder import FeatureBuilder
 from modules.transcriptomics.ml_classifier import MLClassifier
+from modules.figure_studio.plot_editor import render_editable_plot
 from modules.transcriptomics.qc_diagnostics import QCDiagnostics
 from modules.transcriptomics.multi_group_de import (
     MultiGroupDE,
@@ -165,9 +166,7 @@ with tabs[1]:
 
         Dashboard.dataset_metrics(summary)
 
-        st.dataframe(
-            st.session_state.dataset.head()
-        )
+        display_results_table(st.session_state.dataset, "tx_raw_dataset", default_index=4)
 
         stats = DatasetStatistics(
             st.session_state.dataset
@@ -194,9 +193,10 @@ with tabs[2]:
         plot_factory = PlotFactory(st.session_state.dataset)
 
         st.subheader("Library Sizes")
-        st.plotly_chart(
+        render_editable_plot(
             plot_factory.library_size_bar(diagnostics.library_sizes()),
-            use_container_width=True, key="qc_library_size"
+            "qc_library_size",
+            default_title="Library Sizes"
         )
 
         st.divider()
@@ -215,9 +215,10 @@ with tabs[2]:
 
             corr_matrix = st.session_state.qc_corr_matrix
 
-            st.plotly_chart(
+            render_editable_plot(
                 plot_factory.correlation_heatmap(corr_matrix),
-                use_container_width=True, key="qc_correlation"
+                "qc_correlation",
+                default_title="Sample-Sample Correlation"
             )
 
             mean_corr, flagged = diagnostics.flag_outlier_samples()
@@ -239,9 +240,10 @@ with tabs[2]:
             )
 
         if st.session_state.get("qc_density_fig") is not None:
-            st.plotly_chart(
+            render_editable_plot(
                 st.session_state.qc_density_fig,
-                use_container_width=True, key="qc_density"
+                "qc_density",
+                default_title="Expression Distribution"
             )
 
         st.divider()
@@ -374,7 +376,7 @@ with tabs[3]:
                         )
                         st.rerun()
 
-            st.dataframe(st.session_state.filtered.head())
+            display_results_table(st.session_state.filtered, "tx_filtered", default_index=4)
 
     else:
         st.info("Upload a dataset first.")
@@ -404,7 +406,7 @@ with tabs[4]:
 
         if st.session_state.normalized is not None:
 
-            st.dataframe(st.session_state.normalized.head())
+            display_results_table(st.session_state.normalized, "tx_normalized", default_index=4)
 
             st.divider()
             st.subheader("Normalization Diagnostics")
@@ -428,9 +430,10 @@ with tabs[4]:
                 st.session_state.norm_rle_fig = plot_factory.rle_plot(log_cpm_check)
 
             if st.session_state.get("norm_rle_fig") is not None:
-                st.plotly_chart(
+                render_editable_plot(
                     st.session_state.norm_rle_fig,
-                    use_container_width=True, key="norm_rle"
+                    "norm_rle",
+                    default_title="RLE Diagnostic Plot"
                 )
 
     else:
@@ -522,12 +525,14 @@ with tabs[5]:
 
                 plot_factory = PlotFactory(de.df)
 
-                st.plotly_chart(
+                render_editable_plot(
                     plot_factory.volcano_plot(
                         de_results,
                         log2fc_threshold=log2fc_threshold
                     ),
-                    use_container_width=True
+                    "de_volcano",
+                    default_title="Volcano Plot"
+                )
                 )
 
                 st.subheader("PCA")
@@ -539,9 +544,10 @@ with tabs[5]:
                     {sample: "Group B" for sample in group_b}
                 )
 
-                st.plotly_chart(
+                render_editable_plot(
                     plot_factory.pca_plot(group_map),
-                    use_container_width=True
+                    "de_pca",
+                    default_title="PCA Plot"
                 )
 
             else:
@@ -622,7 +628,8 @@ with tabs[5]:
 
                     st.subheader("Inspect a Gene")
 
-                    top_genes = anova_results.head(30)["Gene"].tolist()
+                    n_top = st.selectbox("How many genes to list", [10, 30, 50, 100, 500], index=1, key="tx_top_n")
+                    top_genes = anova_results.head(n_top)["Gene"].tolist()
 
                     selected_gene = st.selectbox(
                         "Choose a significant gene to inspect",
@@ -646,10 +653,10 @@ with tabs[5]:
 
                         if expr_rows:
                             expr_matrix = pd.DataFrame(expr_rows, index=multi_genes)
-                            st.plotly_chart(
+                            render_editable_plot(
                                 plot_factory.top_genes_heatmap(expr_matrix),
-                                use_container_width=True,
-                                key="anova_heatmap"
+                                "anova_heatmap",
+                                default_title="Heatmap of Gene Expression"
                             )
 
                     if selected_gene:
@@ -660,11 +667,12 @@ with tabs[5]:
 
                         plot_factory = PlotFactory(st.session_state.filtered)
 
-                        st.plotly_chart(
+                        render_editable_plot(
                             plot_factory.gene_boxplot(
                                 expression_table, selected_gene
                             ),
-                            use_container_width=True
+                            "anova_box",
+                            default_title="Boxplot of Gene Expression"
                         )
 
                         st.caption("Tukey HSD pairwise comparison:")
@@ -774,9 +782,10 @@ with tabs[6]:
 
             plot_factory = PlotFactory(st.session_state.filtered)
 
-            st.plotly_chart(
+            render_editable_plot(
                 plot_factory.enrichment_bar_plot(results),
-                use_container_width=True
+                "enrichment_bar",
+                default_title="Enrichment Bar Plot"
             )
 with tabs[7]:
 
@@ -945,11 +954,11 @@ with tabs[7]:
 
                         plot_factory = PlotFactory(st.session_state.filtered)
 
-                        st.plotly_chart(
+                        render_editable_plot(
                             plot_factory.confusion_matrix_heatmap(cm),
-                            use_container_width=True,
-                            key="cm_classical"
-                        )  
+                            "cm_classical",
+                            default_title="Confusion Matrix"
+                        )
                         
                         st.subheader("ROC & Precision-Recall Curves")
 
@@ -964,17 +973,17 @@ with tabs[7]:
                         col_roc, col_pr = st.columns(2)
 
                         with col_roc:
-                            st.plotly_chart(
+                            render_editable_plot(
                                 plot_factory.roc_curve_plot(curves),
-                                use_container_width=True,
-                                key="roc_curve"
+                                "roc_curve",
+                                default_title="ROC Curve"
                             )
 
                         with col_pr:
-                            st.plotly_chart(
+                            render_editable_plot(
                                 plot_factory.pr_curve_plot(curves),
-                                use_container_width=True,
-                                key="pr_curve"
+                                "pr_curve",
+                                default_title="Precision-Recall Curve"
                             )
 
                         st.subheader("SHAP Feature Importance")
@@ -1003,11 +1012,11 @@ with tabs[7]:
                                 st.warning(shap_error)
                             else:
                                 importance = interpreter.importance_table(shap_values)
-                                st.dataframe(importance.head(20))
-                                st.plotly_chart(
+                                display_results_table(importance, "tx_shap_importance", default_index=1)
+                                render_editable_plot(
                                     plot_factory.shap_importance_plot(importance),
-                                    use_container_width=True,
-                                    key="shap_plot"
+                                    "shap_plot",
+                                    default_title="SHAP Importance"
                                 )
                                 st.divider()
                         st.subheader("Deep Neural Network")
@@ -1047,12 +1056,12 @@ with tabs[7]:
 
                             st.dataframe(st.session_state.dnn_summary)
 
-                            st.plotly_chart(
+                            render_editable_plot(
                                 plot_factory.confusion_matrix_heatmap(
                                     st.session_state.dnn_cm
                                 ),
-                                use_container_width=True,
-                                key="dnn_cm"
+                                "dnn_cm",
+                                default_title="Confusion Matrix"
                             )
 
                         st.divider()
