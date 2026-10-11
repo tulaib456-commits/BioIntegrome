@@ -533,7 +533,7 @@ with tabs[5]:
                     "de_volcano",
                     default_title="Volcano Plot"
                 )
-                )
+                
 
                 st.subheader("PCA")
 
