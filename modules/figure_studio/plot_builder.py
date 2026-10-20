@@ -17,19 +17,59 @@ class FigureBuilder:
         self.df = dataframe
 
     def bar_chart(self, x, y, group_col=None, palette=None, barmode="group",
-                  title="", x_label="", y_label="", show_error_bars=False):
+                  title="", x_label="", y_label="", summary="Mean ± SD"):
+        """
+        Bar chart of a SUMMARY of y for every category (and group).
 
-        error_y = None
-        if show_error_bars and group_col:
-            pass  # Plotly express handles aggregation error bars via error_y param below
+        IMPORTANT: Plotly's own bar chart stacks (adds up) every row, which
+        gives meaningless sums for experimental data. Journals expect
+        mean +/- error bars, so that is the default here.
+
+        summary: "Mean ± SD", "Mean ± SEM", "Mean only", "Median" or "Sum".
+        SD  = standard deviation (spread of the data).
+        SEM = standard error of the mean = SD / sqrt(n) (precision of the mean).
+        """
+
+        if group_col is None or group_col == x:
+            keys = [x]
+        else:
+            keys = [x, group_col]
+
+        grouped = self.df.groupby(keys, sort=False, dropna=True)[y]
+        n = grouped.count()
+        sd = grouped.std(ddof=1)
+
+        error = None
+        if summary == "Median":
+            value = grouped.median()
+            label = f"Median of {y}"
+        elif summary == "Sum":
+            value = grouped.sum()
+            label = f"Sum of {y}"
+        else:
+            value = grouped.mean()
+            label = f"Mean of {y}"
+            if "SD" in summary:
+                error = sd
+                label += " (± SD)"
+            elif "SEM" in summary:
+                error = sd / np.sqrt(n)
+                label += " (± SEM)"
+
+        table = value.rename("_value").to_frame()
+        if error is not None:
+            table["_error"] = error
+        table = table.reset_index()
 
         fig = px.bar(
-            self.df, x=x, y=y, color=group_col, barmode=barmode,
-            color_discrete_sequence=palette, title=title
+            table, x=x, y="_value", color=group_col, barmode=barmode,
+            error_y="_error" if error is not None else None,
+            color_discrete_sequence=palette, title=title,
+            labels={"_value": label, "_error": "Error"}
         )
 
         fig.update_layout(
-            xaxis_title=x_label or x, yaxis_title=y_label or y
+            xaxis_title=x_label or x, yaxis_title=y_label or label
         )
 
         return fig
@@ -274,6 +314,7 @@ class FigureBuilder:
         fig.add_trace(go.Scatter(
             x=data[estimate_col], y=data[label_col], mode="markers",
             marker=dict(size=10, color="black"),
+            showlegend=False, name="Estimate",
             error_x=dict(
                 type="data",
                 symmetric=False,
