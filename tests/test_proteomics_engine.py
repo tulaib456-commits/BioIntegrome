@@ -99,12 +99,61 @@ def test_protein_with_every_value_missing_does_not_stay_nan_after_imputation():
 
 
 # ------------------------------------------------------------ normalization
-def test_median_normalization_equalises_sample_medians(prot):
+def test_median_normalization_equalises_sample_medians_of_the_complete_proteins(prot):
+    """Shifts are estimated on proteins measured in EVERY sample (missing values are
+    faint-protein dropouts and bias medians of 'all observed values')."""
     df, *_ = prot
     s = sample_cols(df)
-    out = ProteomicsNormalizer(df, s).median_normalization()
-    meds = out[s].median()
+    n = ProteomicsNormalizer(df, s)
+    out = n.median_normalization()
+    core = out[s].dropna(axis=0, how="any")
+    assert len(core) >= 50 and "measured in every sample" in n.median_basis
+    meds = core.median()
     assert meds.max() - meds.min() < 1e-9
+
+
+def test_median_normalization_falls_back_when_no_complete_proteins():
+    rng = np.random.default_rng(0)
+    vals = rng.normal(20, 1, (40, 4)); vals[np.arange(40), rng.integers(0, 4, 40)] = np.nan
+    df = pd.DataFrame(vals, columns=list("ABCD")); df.insert(0, "Gene", [f"P{i}" for i in range(40)])
+    n = ProteomicsNormalizer(df, list("ABCD"))
+    out = n.median_normalization()
+    assert "too few" in n.median_basis and np.isfinite(out[list("ABCD")].median()).all()
+
+
+def test_median_normalization_removes_a_group_wide_loading_offset_despite_missing_values():
+    """Simulate a +0.6 loading offset in group B plus abundance-dependent dropouts.
+    After normalization the UNCHANGED proteins must show ~no group difference."""
+    rng = np.random.default_rng(7)
+    n_prot, n = 1500, 12
+    base = rng.normal(24, 3, (n_prot, 1))
+    off = np.r_[np.zeros(6), np.full(6, 0.6)] + rng.normal(0, 0.1, n)
+    vals = base + off + rng.normal(0, 0.3, (n_prot, n))
+    miss = rng.random(vals.shape) < 1 / (1 + np.exp((vals - 19) / 1.1)) * 0.9
+    vals[miss] = np.nan
+    cols = [f"A_{i}" for i in range(6)] + [f"B_{i}" for i in range(6)]
+    df = pd.DataFrame(vals, columns=cols); df.insert(0, "Gene", [f"P{i}" for i in range(n_prot)])
+    out = ProteomicsNormalizer(df, cols).median_normalization()
+    diff = (out[cols[6:]].mean(axis=1) - out[cols[:6]].mean(axis=1)).mean()
+    before = (df[cols[6:]].mean(axis=1) - df[cols[:6]].mean(axis=1)).mean()
+    assert abs(diff) < 0.1 and abs(before) > 0.4
+
+
+def test_median_normalization_refuses_a_sample_with_no_values():
+    df = pd.DataFrame({"Gene": list("abc"), "S1": [1.0, 2, 3], "S2": [np.nan] * 3})
+    with pytest.raises(ValueError, match="no measured values"):
+        ProteomicsNormalizer(df, ["S1", "S2"]).median_normalization()
+
+
+def test_presence_absence_table_finds_switched_on_and_off_proteins():
+    from modules.proteomics.missing_value_handler import presence_absence_table
+    cols = ["A_1", "A_2", "A_3", "B_1", "B_2", "B_3"]
+    nan = np.nan
+    df = pd.DataFrame({"Gene": ["onlyB", "onlyA", "both", "weak", "none"],
+                       "A_1": [nan, 5, 5, 5, nan], "A_2": [nan, 5, 5, nan, nan], "A_3": [nan, 5, 5, nan, nan],
+                       "B_1": [6, nan, 5, nan, nan], "B_2": [6, nan, 5, 6, nan], "B_3": [6, nan, 5, nan, nan]})
+    t = presence_absence_table(df, "Gene", cols[:3], cols[3:])
+    assert dict(zip(t.Gene, t.Present_in)) == {"onlyA": "Group A only", "onlyB": "Group B only"}
 
 
 def test_median_normalization_preserves_within_sample_differences(prot):

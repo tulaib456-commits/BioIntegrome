@@ -1,4 +1,6 @@
 """Drives the real Proteomics page: upload -> missing values -> normalization -> DE -> ML."""
+import os
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -121,3 +123,16 @@ def test_text_annotation_column_next_to_samples_is_not_treated_as_a_sample(tmp_p
     df["Description"] = "some protein"
     d = make_driver(csv_of(df), "annot.csv", tmp_path, monkeypatch); ok(d)
     assert "6 samples" in d.text()
+
+
+def test_one_group_only_table_appears_on_the_page_and_lists_the_switched_on_proteins(tmp_path, monkeypatch):
+    path = os.path.join(os.path.dirname(__file__), "data", "dummy", "Proteomics_1_two_groups_log2_intensity.csv")
+    d = make_driver(open(path, "rb").read(), "p1.csv", tmp_path, monkeypatch)
+    d.assign_groups("proteomics_mv", {"Normal_": "Normal", "Tumor_": "Tumor"})
+    d.set_radio("How should the remaining missing values be handled?", NO_IMPUTE)
+    d.click("Filter and Handle Missing Values"); d.click("Apply Normalization")
+    samples = list(d.at.multiselect(key="prot_group_a").options)
+    d.set_ms_key("prot_group_a", [s for s in samples if s.startswith("Normal_")])
+    d.set_ms_key("prot_group_b", [s for s in samples if s.startswith("Tumor_")]); ok(d)
+    labels = [e.label for e in d.at.expander]
+    assert any("detected in only ONE group (10)" in label for label in labels), labels

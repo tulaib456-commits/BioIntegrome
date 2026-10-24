@@ -148,3 +148,35 @@ class Imputer:
         df[samples] = values
 
         return df
+
+
+def presence_absence_table(dataframe, protein_column, group_a, group_b,
+                           min_fraction=0.7, max_other_valid=0):
+    """
+    Proteins detected in (nearly) all samples of ONE group and in (almost)
+    none of the other. They cannot be tested with a t-test (one group has no
+    data), yet they are often the most interesting result in proteomics
+    (a protein switched on or off, or below the detection limit).
+
+    min_fraction     share of samples in the "present" group that must have a value
+    max_other_valid  how many samples in the other group may still have a value
+    """
+
+    a = dataframe[list(group_a)].astype(float)
+    b = dataframe[list(group_b)].astype(float)
+
+    n_a = a.notna().sum(axis=1)
+    n_b = b.notna().sum(axis=1)
+
+    present_a = (n_a >= np.ceil(min_fraction * len(group_a))) & (n_b <= max_other_valid)
+    present_b = (n_b >= np.ceil(min_fraction * len(group_b))) & (n_a <= max_other_valid)
+
+    rows = dataframe.loc[present_a | present_b, [protein_column]].copy()
+    rows["Detected_in_Group_A"] = n_a[rows.index].astype(int).astype(str) + f"/{len(group_a)}"
+    rows["Detected_in_Group_B"] = n_b[rows.index].astype(int).astype(str) + f"/{len(group_b)}"
+    rows["Present_in"] = np.where(present_a[rows.index], "Group A only", "Group B only")
+    rows["Mean_where_detected"] = np.where(
+        present_a[rows.index], a.mean(axis=1)[rows.index], b.mean(axis=1)[rows.index]
+    ).round(3)
+
+    return rows.sort_values(["Present_in", "Mean_where_detected"], ascending=[True, False]).reset_index(drop=True)

@@ -4,7 +4,7 @@ import numpy as np
 
 from modules.auth import require_active_plan
 from modules.proteomics.missing_value_handler import (
-    MissingValueAnalyzer, ProteomicsFilter, Imputer
+    MissingValueAnalyzer, ProteomicsFilter, Imputer, presence_absence_table
 )
 from modules.proteomics.normalization import ProteomicsNormalizer
 
@@ -246,6 +246,37 @@ with tabs[3]:
 
                     st.success(f"{int(de_results['Significant'].sum())} significant proteins")
                     display_results_table(de_results, "prot_de")
+
+                    if getattr(de, "n_untestable", 0):
+                        st.caption(
+                            f"{de.n_untestable} protein(s) could not be tested (fewer than 2 "
+                            "valid values in a group, or no variation) and were left out of "
+                            "the FDR correction."
+                        )
+
+                    only_one_group = presence_absence_table(
+                        data, protein_column, group_a, group_b
+                    )
+                    with st.expander(
+                        f"Proteins detected in only ONE group ({len(only_one_group)}) — "
+                        "cannot be t-tested, often the most interesting",
+                        expanded=len(only_one_group) > 0
+                    ):
+                        if only_one_group.empty:
+                            st.info("No protein is detected in one group and absent from the other.")
+                        else:
+                            st.caption(
+                                "Detected in at least 70% of one group and in none of the "
+                                "other. These are 'switched on/off' or below-detection-limit "
+                                "candidates; confirm them with a targeted assay."
+                            )
+                            display_results_table(only_one_group, "prot_only_one_group", default_index=1)
+                            st.download_button(
+                                "Download this table (CSV)",
+                                only_one_group.to_csv(index=False).encode("utf-8"),
+                                file_name="proteins_detected_in_one_group.csv",
+                                mime="text/csv", key="prot_only_one_dl"
+                            )
 
                     plot_factory = PlotFactory(de.df)
                     render_editable_plot(plot_factory.volcano_plot(de_results), "tx_volcano", default_title="Volcano plot")

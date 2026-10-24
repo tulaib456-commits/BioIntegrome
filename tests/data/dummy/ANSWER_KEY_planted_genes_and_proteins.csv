@@ -1,0 +1,741 @@
+dataset,gene_or_protein,planted_effect,kind
+RNAseq_1_two_groups_counts.csv,ISG15,"{""Treated"": 10.844871413514063}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,IFIT1,"{""Treated"": 7.0220426918384256}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,IFIT2,"{""Treated"": 11.8155807657435}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,IFIT3,"{""Treated"": 10.531842150931048}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,MX1,"{""Treated"": 9.817081133142217}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,MX2,"{""Treated"": 11.870352864390865}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,OAS1,"{""Treated"": 9.404912188243351}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,OAS2,"{""Treated"": 9.19938591192591}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,OAS3,"{""Treated"": 11.970439729529861}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,OASL,"{""Treated"": 10.397158034817553}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,IFI6,"{""Treated"": 11.983721452205327}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,IFI27,"{""Treated"": 7.754976314766897}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,IFI35,"{""Treated"": 11.035264557834747}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,IFI44,"{""Treated"": 9.840014429004992}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,IFI44L,"{""Treated"": 7.728355928733261}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,IRF7,"{""Treated"": 9.378482414274949}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,IRF9,"{""Treated"": 6.922010920896735}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,STAT1,"{""Treated"": 5.10273221199773}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,STAT2,"{""Treated"": 5.506793546339211}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,USP18,"{""Treated"": 8.825853608712968}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,RSAD2,"{""Treated"": 11.691847514302495}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,CXCL10,"{""Treated"": 8.532952084950953}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,CXCL11,"{""Treated"": 9.598670648603235}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,BST2,"{""Treated"": 5.673906855044575}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,IFITM1,"{""Treated"": 9.12696993741448}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,IFITM3,"{""Treated"": 9.180016904227312}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,HERC5,"{""Treated"": 8.92034039973829}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,HERC6,"{""Treated"": 9.066917294494669}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,DDX58,"{""Treated"": 9.967332383644433}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,IFIH1,"{""Treated"": 7.274054575096834}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,EPSTI1,"{""Treated"": 10.236200856081688}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,SAMD9,"{""Treated"": 8.264156725380175}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,SAMD9L,"{""Treated"": 8.094674689916474}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,PARP9,"{""Treated"": 7.120830086279993}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,PARP14,"{""Treated"": 9.946414541211055}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,TRIM22,"{""Treated"": 7.4978526668802115}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,XAF1,"{""Treated"": 8.571561839733839}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,LY6E,"{""Treated"": 7.312324499490357}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GBP1,"{""Treated"": 9.639544072562956}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GBP2,"{""Treated"": 9.026109676157503}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,CCNB1,"{""Treated"": 0.31698879925588264}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,CCNB2,"{""Treated"": 0.2417469027178476}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,CCNA2,"{""Treated"": 0.3094852008931229}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,CDK1,"{""Treated"": 0.22769117644977677}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,CDC20,"{""Treated"": 0.3140528102046031}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,CDC25C,"{""Treated"": 0.3491673247489473}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,PLK1,"{""Treated"": 0.3208392665291701}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,AURKA,"{""Treated"": 0.3459404692770061}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,AURKB,"{""Treated"": 0.32909622621197465}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,BUB1,"{""Treated"": 0.24323791229395078}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,BUB1B,"{""Treated"": 0.2426111154066689}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,MKI67,"{""Treated"": 0.2089672278245429}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,TOP2A,"{""Treated"": 0.25123387731065927}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,CENPA,"{""Treated"": 0.3089800907831088}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,CENPE,"{""Treated"": 0.33373587945736216}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,CENPF,"{""Treated"": 0.33644736531822944}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,KIF11,"{""Treated"": 0.29862540834631957}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,KIF20A,"{""Treated"": 0.3319613507772714}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,KIF23,"{""Treated"": 0.24057199604128807}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,NUSAP1,"{""Treated"": 0.34889691851400617}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,PRC1,"{""Treated"": 0.2919663285501635}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,TPX2,"{""Treated"": 0.30287931811090957}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,UBE2C,"{""Treated"": 0.24639684100477058}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,BIRC5,"{""Treated"": 0.24737567837386842}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,ASPM,"{""Treated"": 0.20510912944398568}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,NDC80,"{""Treated"": 0.2606809125478537}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,NEK2,"{""Treated"": 0.28528059903773667}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,TTK,"{""Treated"": 0.3337773937429763}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,ESPL1,"{""Treated"": 0.34365468251497977}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,MAD2L1,"{""Treated"": 0.25215303421659835}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,CDCA8,"{""Treated"": 0.2929485009450798}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,CCNE1,"{""Treated"": 0.21616848064430724}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,MCM2,"{""Treated"": 0.22789097536885153}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,MCM4,"{""Treated"": 0.33354511964435474}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,MCM6,"{""Treated"": 0.2069073692265012}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,PCNA,"{""Treated"": 0.3291472267898972}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,RRM2,"{""Treated"": 0.2627732960472171}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,TYMS,"{""Treated"": 0.3458031496099936}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,FEN1,"{""Treated"": 0.28373087136029396}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GINS2,"{""Treated"": 0.3277860930626962}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00080,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00081,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00082,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00083,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00084,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00085,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00086,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00087,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00088,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00089,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00090,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00091,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00092,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00093,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00094,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00095,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00096,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00097,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00098,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00099,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00100,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00101,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00102,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00103,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00104,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00105,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00106,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00107,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00108,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00109,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00110,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00111,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00112,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00113,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00114,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00115,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00116,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00117,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00118,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00119,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00120,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00121,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00122,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00123,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00124,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00125,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00126,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00127,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00128,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00129,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00130,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00131,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00132,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00133,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00134,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00135,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00136,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00137,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00138,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00139,"{""Treated"": 2.6}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00140,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00141,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00142,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00143,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00144,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00145,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00146,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00147,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00148,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00149,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00150,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00151,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00152,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00153,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00154,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00155,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00156,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00157,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00158,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00159,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00160,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00161,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00162,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00163,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00164,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00165,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00166,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00167,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00168,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00169,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00170,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00171,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00172,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00173,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00174,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00175,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00176,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00177,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00178,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00179,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00180,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00181,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00182,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00183,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00184,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00185,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00186,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00187,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00188,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00189,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00190,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00191,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00192,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00193,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00194,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00195,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00196,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00197,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00198,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_1_two_groups_counts.csv,GENE_00199,"{""Treated"": 0.4}",RNA planted DE
+RNAseq_2_three_groups_counts.csv,GENE_00000,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00001,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00002,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00003,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00004,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00005,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00006,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00007,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00008,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00009,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00010,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00011,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00012,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00013,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00014,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00015,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00016,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00017,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00018,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00019,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00020,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00021,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00022,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00023,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00024,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00025,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00026,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00027,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00028,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00029,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00030,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00031,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00032,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00033,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00034,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00035,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00036,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00037,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00038,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00039,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00040,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00041,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00042,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00043,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00044,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00045,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00046,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00047,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00048,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00049,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00050,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00051,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00052,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00053,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00054,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00055,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00056,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00057,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00058,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00059,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00060,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00061,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00062,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00063,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00064,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00065,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00066,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00067,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00068,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00069,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00070,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00071,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00072,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00073,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00074,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00075,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00076,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00077,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00078,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00079,"{""DrugA"": 4.0}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00080,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00081,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00082,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00083,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00084,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00085,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00086,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00087,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00088,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00089,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00090,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00091,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00092,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00093,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00094,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00095,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00096,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00097,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00098,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00099,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00100,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00101,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00102,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00103,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00104,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00105,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00106,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00107,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00108,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00109,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00110,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00111,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00112,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00113,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00114,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00115,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00116,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00117,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00118,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00119,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00120,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00121,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00122,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00123,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00124,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00125,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00126,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00127,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00128,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00129,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00130,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00131,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00132,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00133,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00134,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00135,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00136,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00137,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00138,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00139,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00140,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00141,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00142,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00143,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00144,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00145,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00146,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00147,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00148,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00149,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00150,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00151,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00152,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00153,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00154,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00155,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00156,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00157,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00158,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00159,"{""DrugB"": 0.25}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00160,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00161,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00162,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00163,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00164,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00165,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00166,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00167,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00168,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00169,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00170,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00171,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00172,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00173,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00174,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00175,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00176,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00177,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00178,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00179,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00180,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00181,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00182,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00183,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00184,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00185,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00186,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00187,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00188,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00189,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00190,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00191,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00192,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00193,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00194,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00195,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00196,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00197,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00198,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00199,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00200,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00201,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00202,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00203,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00204,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00205,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00206,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00207,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00208,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00209,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00210,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00211,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00212,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00213,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00214,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00215,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00216,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00217,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00218,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_2_three_groups_counts.csv,GENE_00219,"{""DrugA"": 3.0, ""DrugB"": 3.2}",RNA planted ANOVA
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00000,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00001,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00002,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00003,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00004,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00005,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00006,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00007,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00008,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00009,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00010,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00011,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00012,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00013,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00014,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00015,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00016,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00017,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00018,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00019,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00020,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00021,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00022,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00023,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00024,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00025,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00026,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00027,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00028,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00029,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00030,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00031,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00032,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00033,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00034,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00035,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00036,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00037,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00038,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00039,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00040,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00041,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00042,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00043,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00044,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00045,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00046,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00047,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00048,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00049,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00050,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00051,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00052,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00053,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00054,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00055,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00056,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00057,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00058,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00059,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00060,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00061,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00062,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00063,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00064,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00065,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00066,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00067,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00068,"{""Treated"": 4.0}",RNA planted DE (messy file)
+RNAseq_3_messy_edge_cases_counts.csv,GENE_00069,"{""Treated"": 4.0}",RNA planted DE (messy file)
+Proteomics_1_two_groups_log2_intensity.csv,MKI67,"{""Tumor"": 1.7762009724149657}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,TOP2A,"{""Tumor"": 1.7967039656552957}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PCNA,"{""Tumor"": 1.0358819829307624}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,MCM2,"{""Tumor"": 1.2133976108050901}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,MCM3,"{""Tumor"": 1.6881959790992385}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,MCM4,"{""Tumor"": 1.661396821151293}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,MCM5,"{""Tumor"": 1.6323045299777792}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,MCM6,"{""Tumor"": 1.4490913766839688}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,MCM7,"{""Tumor"": 1.0729529167630223}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,CDK1,"{""Tumor"": 1.4439910842128336}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,CCNB1,"{""Tumor"": 1.4290174293653686}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,CCNA2,"{""Tumor"": 1.2898684535264737}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,AURKA,"{""Tumor"": 1.0530076322022512}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PLK1,"{""Tumor"": 2.090509105753773}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,BIRC5,"{""Tumor"": 1.632079479870147}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,TYMS,"{""Tumor"": 1.1363027718468923}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,RRM2,"{""Tumor"": 1.1694893751312754}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,FEN1,"{""Tumor"": 1.5362172592776497}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,LIG1,"{""Tumor"": 1.6017895187449187}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,EGFR,"{""Tumor"": 1.9424366570469977}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,ERBB2,"{""Tumor"": 1.0494169105473925}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,LGALS3,"{""Tumor"": 1.3263281389181358}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,S100A11,"{""Tumor"": 2.019626220039842}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,S100A6,"{""Tumor"": 2.10361461672199}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,TACSTD2,"{""Tumor"": 1.6739866091402247}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,CA1,"{""Tumor"": -1.3204432765188825}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,CA2,"{""Tumor"": -1.883443167897306}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,MUC2,"{""Tumor"": -1.0413274769535708}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,GUCA2A,"{""Tumor"": -1.78031021741055}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,GUCA2B,"{""Tumor"": -1.2167797364388702}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,AQP8,"{""Tumor"": -1.5475582852471756}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,SLC26A3,"{""Tumor"": -1.8111909295647992}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,CLCA1,"{""Tumor"": -2.0451529428255384}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,ZG16,"{""Tumor"": -1.9168106885720237}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,CEACAM7,"{""Tumor"": -1.889814174459161}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,FABP2,"{""Tumor"": -1.8758711770348608}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,SELENBP1,"{""Tumor"": -1.5320620906031106}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,CA4,"{""Tumor"": -1.3367670081940428}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,MS4A12,"{""Tumor"": -2.017992627634313}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,CDHR5,"{""Tumor"": -1.7230515566559943}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,SLC26A2,"{""Tumor"": -1.7684002395143086}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,HSD17B2,"{""Tumor"": -1.28864239161248}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,CYP2B6,"{""Tumor"": -2.173707465707163}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,ALDH1A1,"{""Tumor"": -1.9862848283659666}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,TFF3,"{""Tumor"": -1.5818140342260907}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,FCGBP,"{""Tumor"": -1.1033123718416196}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,CEACAM5,"{""Tumor"": -2.191796542122299}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,VIL1,"{""Tumor"": -1.2628924757531879}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,KRT20,"{""Tumor"": -1.6210399466579983}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,LYZ,"{""Tumor"": -1.937615962161444}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_00,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_01,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_02,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_03,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_04,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_05,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_06,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_07,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_08,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_09,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_10,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_11,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_12,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_13,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_14,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_15,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_16,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_17,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_18,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_19,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_20,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_21,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_22,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_23,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_24,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_25,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_26,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_27,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_28,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,PROT_UP_29,"{""Tumor"": 1.2}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,TUMORONLY_01,"{""Tumor"": ""present only here""}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,TUMORONLY_02,"{""Tumor"": ""present only here""}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,TUMORONLY_03,"{""Tumor"": ""present only here""}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,TUMORONLY_04,"{""Tumor"": ""present only here""}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,TUMORONLY_05,"{""Tumor"": ""present only here""}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,TUMORONLY_06,"{""Tumor"": ""present only here""}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,TUMORONLY_07,"{""Tumor"": ""present only here""}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,TUMORONLY_08,"{""Tumor"": ""present only here""}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,TUMORONLY_09,"{""Tumor"": ""present only here""}",Protein planted (log2 shift)
+Proteomics_1_two_groups_log2_intensity.csv,TUMORONLY_10,"{""Tumor"": ""present only here""}",Protein planted (log2 shift)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_00,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_01,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_02,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_03,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_04,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_05,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_06,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_07,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_08,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_09,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_10,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_11,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_12,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_13,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_14,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_15,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_16,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_17,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_18,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_19,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_20,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_21,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_22,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_23,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_24,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_25,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_26,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_27,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_28,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_29,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_30,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_31,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_32,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_33,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_TREND_34,"{""Mild"": 0.8, ""Severe"": 1.7}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_00,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_01,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_02,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_03,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_04,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_05,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_06,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_07,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_08,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_09,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_10,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_11,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_12,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_13,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_14,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_15,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_16,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_17,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_18,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_19,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_20,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_21,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_22,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_23,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_2_three_groups_log2_intensity.csv,PROT_SEVONLY_24,"{""Severe"": 1.8}",Protein planted (ANOVA)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_00,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_01,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_02,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_03,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_04,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_05,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_06,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_07,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_08,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_09,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_10,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_11,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_12,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_13,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_14,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_15,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_16,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_17,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_18,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_19,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_20,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_21,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_22,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_23,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_24,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_25,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_26,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_27,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_28,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_29,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_30,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_31,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_32,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_33,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_34,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_35,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_36,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_37,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_38,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_39,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_40,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_41,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_42,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_43,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_44,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_45,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_46,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_47,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_48,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_UP_49,"{""Tumor"": 1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_00,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_01,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_02,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_03,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_04,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_05,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_06,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_07,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_08,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_09,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_10,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_11,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_12,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_13,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_14,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_15,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_16,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_17,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_18,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_19,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_20,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_21,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_22,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_23,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_24,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_25,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_26,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_27,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_28,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_29,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_30,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_31,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_32,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_33,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_34,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_35,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_36,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_37,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_38,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_39,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_40,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_41,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_42,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_43,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_44,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_45,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_46,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_47,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_48,"{""Tumor"": -1.4}",Protein planted (log-ratio)
+Proteomics_3_log_ratios_with_negatives.csv,PROT_DN_49,"{""Tumor"": -1.4}",Protein planted (log-ratio)
