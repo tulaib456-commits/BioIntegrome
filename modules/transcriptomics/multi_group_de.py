@@ -2,6 +2,10 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
+from modules.transcriptomics.input_checks import (
+    check_samples_numeric, check_no_negative_values, check_no_empty_libraries
+)
+
 
 def suggest_multi_groups(samples, max_groups=8):
     """
@@ -44,6 +48,17 @@ class MultiGroupDE:
         self.samples = list(group_map.keys())
         self.groups = sorted(set(group_map.values()))
 
+        if len(self.groups) < 2:
+            raise ValueError("ANOVA needs at least 2 groups.")
+        if len(self.samples) <= len(self.groups):
+            raise ValueError(
+                "ANOVA needs more samples than groups (at least one group "
+                "must have replicates)."
+            )
+        check_samples_numeric(dataframe, self.samples)
+        check_no_negative_values(dataframe, self.samples, already_normalized)
+        check_no_empty_libraries(dataframe, self.samples, already_normalized)
+
         if already_normalized:
             self.df = dataframe.copy()
         else:
@@ -57,6 +72,13 @@ class MultiGroupDE:
         return df
 
     def run(self, fdr_threshold=0.05, min_effect_size=0.0):
+        """
+        One-way ANOVA for every gene at once (vectorized). Missing values are
+        handled gene by gene: each gene uses the valid values it has. A gene
+        that cannot be tested (fewer than 2 groups with data, no degrees of
+        freedom, or no variation inside any group) gets p = NaN and is left
+        out of the FDR correction.
+        """
 
         from statsmodels.stats.multitest import multipletests
 
@@ -64,53 +86,68 @@ class MultiGroupDE:
         values = self.df[self.samples].values.astype(float)
 
         sample_index = {s: i for i, s in enumerate(self.samples)}
+        valid = ~np.isnan(values)
+        filled = np.where(valid, values, 0.0)
 
-        group_sample_lists = {
-            group: [s for s in self.samples if self.group_map[s] == group]
-            for group in self.groups
-        }
+        n_genes = values.shape[0]
 
-        k = len(self.groups)
-        n_total = values.shape[1]
+        n_total = valid.sum(axis=1).astype(float)
+        grand_mean = np.where(n_total > 0, filled.sum(axis=1) / np.maximum(n_total, 1), np.nan)
 
-        grand_mean = values.mean(axis=1)
-
-        ss_between = np.zeros(values.shape[0])
-        ss_within = np.zeros(values.shape[0])
+        ss_between = np.zeros(n_genes)
+        ss_within = np.zeros(n_genes)
+        k_present = np.zeros(n_genes)
         group_means = {}
 
         for group in self.groups:
 
-            idx = [sample_index[s] for s in group_sample_lists[group]]
-            group_vals = values[:, idx]
-            n_g = group_vals.shape[1]
-            mean_g = group_vals.mean(axis=1)
+            idx = [sample_index[s] for s in self.samples if self.group_map[s] == group]
+            g_valid = valid[:, idx]
+            g_filled = filled[:, idx]
+            n_g = g_valid.sum(axis=1).astype(float)
+
+            with np.errstate(invalid="ignore", divide="ignore"):
+                mean_g = np.where(n_g > 0, g_filled.sum(axis=1) / np.maximum(n_g, 1), np.nan)
 
             group_means[group] = mean_g
-            ss_between += n_g * (mean_g - grand_mean) ** 2
-            ss_within += ((group_vals - mean_g[:, None]) ** 2).sum(axis=1)
+            present = n_g > 0
+            k_present += present
 
-        df_between = k - 1
-        df_within = n_total - k
+            ss_between += np.where(present, n_g * (mean_g - grand_mean) ** 2, 0.0)
+            dev = np.where(g_valid, g_filled - np.nan_to_num(mean_g)[:, None], 0.0)
+            ss_within += (dev ** 2).sum(axis=1)
 
-        ms_between = ss_between / df_between
-        ms_within = np.where(df_within > 0, ss_within / df_within, np.nan)
+        df_between = k_present - 1
+        df_within = n_total - k_present
+
+        testable = (df_between >= 1) & (df_within >= 1)
 
         with np.errstate(divide="ignore", invalid="ignore"):
-            f_stats = np.where(ms_within > 0, ms_between / ms_within, 0.0)
+            ms_between = ss_between / np.where(df_between >= 1, df_between, np.nan)
+            ms_within = ss_within / np.where(df_within >= 1, df_within, np.nan)
+            f_stats = ms_between / ms_within
 
-        p_values = stats.f.sf(f_stats, df_between, df_within)
-        p_values = np.nan_to_num(p_values, nan=1.0)
-        f_stats = np.nan_to_num(f_stats, nan=0.0)
+        testable &= np.isfinite(f_stats) & (ms_within > 0)
 
-        _, adjusted_p_values, _, _ = multipletests(p_values, method="fdr_bh")
+        p_values = np.full(n_genes, np.nan)
+        p_values[testable] = stats.f.sf(
+            f_stats[testable], df_between[testable], df_within[testable]
+        )
+        f_out = np.where(testable, f_stats, np.nan)
+
+        adjusted_p_values = np.full(n_genes, np.nan)
+        if testable.any():
+            adjusted_p_values[testable] = multipletests(
+                p_values[testable], method="fdr_bh"
+            )[1]
 
         means_matrix = np.column_stack([group_means[g] for g in self.groups])
-        max_mean_diff = means_matrix.max(axis=1) - means_matrix.min(axis=1)
+        with np.errstate(invalid="ignore"):
+            max_mean_diff = np.nanmax(means_matrix, axis=1) - np.nanmin(means_matrix, axis=1)
 
         results = pd.DataFrame({
             "Gene": genes,
-            "F_Statistic": f_stats,
+            "F_Statistic": f_out,
             "P_Value": p_values,
             "Adj_P_Value": adjusted_p_values,
             "Max_Mean_Diff": max_mean_diff
@@ -122,9 +159,13 @@ class MultiGroupDE:
         results["Significant"] = (
             (results["Adj_P_Value"] < fdr_threshold)
             & (results["Max_Mean_Diff"] >= min_effect_size)
-        )
+        ).fillna(False)
 
-        return results.sort_values("Adj_P_Value").reset_index(drop=True)
+        self.n_untestable = int((~testable).sum())
+
+        return results.sort_values(
+            "Adj_P_Value", na_position="last"
+        ).reset_index(drop=True)
 
     def posthoc(self, gene_name):
         """
@@ -143,6 +184,12 @@ class MultiGroupDE:
 
         values = np.array([float(row[s]) for s in self.samples])
         labels = np.array([self.group_map[s] for s in self.samples])
+
+        keep = ~np.isnan(values)
+        values, labels = values[keep], labels[keep]
+
+        if len(set(labels)) < 2:
+            return None
 
         tukey_result = pairwise_tukeyhsd(endog=values, groups=labels)
         summary = tukey_result.summary()

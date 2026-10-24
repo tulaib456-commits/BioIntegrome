@@ -46,7 +46,7 @@ def display_results_table(dataframe, key_prefix, long_text_columns=None, default
 
     st.dataframe(
         display_df,
-        use_container_width=True,
+        width="stretch",
         height=450,
         column_config=column_config if column_config else None,
         key=f"{key_prefix}_table"

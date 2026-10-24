@@ -8,6 +8,10 @@ from modules.transcriptomics.validator import (
     detect_gene_column,
     detect_sample_columns
 )
+from modules.transcriptomics.input_checks import (
+    check_samples_numeric, check_no_negative_values,
+    check_no_empty_libraries, check_group_sizes
+)
 
 
 def suggest_groups(samples):
@@ -59,19 +63,36 @@ def suggest_groups(samples):
 class DifferentialExpression:
     """
     Runs gene-by-gene differential expression between two groups
-    of samples on RAW (filtered, non-normalized) counts.
+    of samples (Welch's t-test, Benjamini-Hochberg FDR).
 
-    Internally applies CPM + log2 normalization so results do not
-    depend on whatever normalization method was chosen elsewhere
-    in the app for export purposes.
+    Raw counts (already_normalized=False): CPM + log2 is applied internally.
+    Already normalized / log-ratio data (already_normalized=True): used as is.
+
+    Safety behaviour (verified by the test-suite):
+      * a group with fewer than 2 samples is refused with a clear message
+      * negative values with already_normalized=False are refused (they would
+        silently turn into NaN and p = 1.0)
+      * missing values are handled gene by gene (scipy nan_policy="omit")
+      * a gene that cannot be tested (fewer than 2 valid values in a group, or
+        no variation at all) gets p = NaN and is EXCLUDED from the FDR
+        correction, instead of being silently set to p = 1.0
     """
 
     def __init__(self, dataframe, group_a, group_b, already_normalized=False):
 
         self.gene_column = detect_gene_column(dataframe)
 
-        self.group_a = group_a
-        self.group_b = group_b
+        self.group_a = list(group_a)
+        self.group_b = list(group_b)
+
+        check_group_sizes(self.group_a, self.group_b)
+        check_samples_numeric(dataframe, self.group_a + self.group_b)
+        check_no_negative_values(
+            dataframe, self.group_a + self.group_b, already_normalized
+        )
+        check_no_empty_libraries(
+            dataframe, self.group_a + self.group_b, already_normalized
+        )
 
         self.raw = dataframe.copy()
 
@@ -96,29 +117,46 @@ class DifferentialExpression:
 
     def run(self, fdr_threshold=0.05, log2fc_threshold=1.0):
 
+        import warnings
+
         genes = self.df[self.gene_column].values
 
         a_values = self.df[self.group_a].values.astype(float)
         b_values = self.df[self.group_b].values.astype(float)
 
-        mean_a = a_values.mean(axis=1)
-        mean_b = b_values.mean(axis=1)
+        n_a = np.sum(~np.isnan(a_values), axis=1)
+        n_b = np.sum(~np.isnan(b_values), axis=1)
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", RuntimeWarning)
+
+            mean_a = np.nanmean(a_values, axis=1)
+            mean_b = np.nanmean(b_values, axis=1)
+            var_a = np.nanvar(a_values, axis=1, ddof=1)
+            var_b = np.nanvar(b_values, axis=1, ddof=1)
+
+            _, p_values = stats.ttest_ind(
+                b_values, a_values, axis=1,
+                equal_var=False, nan_policy="omit"
+            )
 
         log2fc = mean_b - mean_a
 
-        t_stats, p_values = stats.ttest_ind(
-            b_values,
-            a_values,
-            axis=1,
-            equal_var=False
+        no_variation = (var_a == 0) & (var_b == 0)
+
+        testable = (
+            (n_a >= 2) & (n_b >= 2)
+            & ~no_variation
+            & np.isfinite(p_values)
         )
 
-        p_values = np.nan_to_num(p_values, nan=1.0)
+        p_values = np.where(testable, p_values, np.nan)
 
-        _, adjusted_p_values, _, _ = multipletests(
-            p_values,
-            method="fdr_bh"
-        )
+        adjusted = np.full(len(p_values), np.nan)
+        if testable.any():
+            adjusted[testable] = multipletests(
+                p_values[testable], method="fdr_bh"
+            )[1]
 
         results = pd.DataFrame({
             "Gene": genes,
@@ -126,16 +164,20 @@ class DifferentialExpression:
             "Mean_GroupB": mean_b,
             "Log2FC": log2fc,
             "P_Value": p_values,
-            "Adj_P_Value": adjusted_p_values
+            "Adj_P_Value": adjusted,
+            "N_GroupA": n_a,
+            "N_GroupB": n_b
         })
 
         results["Significant"] = (
             (results["Adj_P_Value"] < fdr_threshold)
             & (results["Log2FC"].abs() >= log2fc_threshold)
-        )
+        ).fillna(False)
+
+        self.n_untestable = int((~testable).sum())
 
         results = results.sort_values(
-            "Adj_P_Value"
+            "Adj_P_Value", na_position="last"
         ).reset_index(drop=True)
 
         return results

@@ -1,0 +1,23 @@
+# Runs the whole BioAI test-suite automatically on every `git push`.
+# Result appears as a green tick / red cross next to the commit on GitHub (tab "Actions").
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt pytest
+      - name: Run tests
+        run: python -m pytest -q

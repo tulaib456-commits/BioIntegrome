@@ -77,11 +77,20 @@ class ProteomicsFilter:
 
 class Imputer:
     """
-    Downshifted-normal-distribution imputation -- the standard
-    method for MNAR proteomics data (Perseus default). Simulates
-    "below detection limit" by drawing from a distribution shifted
-    below and narrower than the protein's own observed values,
-    rather than using the mean.
+    Downshifted-normal-distribution imputation -- the standard method for
+    MNAR proteomics data (Perseus / FragPipe-Analyst "Perseus-style").
+
+    For EACH SAMPLE (column) separately, missing values are drawn from a
+    normal distribution with
+        mean = (mean of that sample's observed values) - downshift * SD
+        SD   = width * (SD of that sample's observed values)
+    with the Perseus defaults downshift = 1.8 and width = 0.3.
+    The logic: a missing protein was probably below the detection limit, so it
+    is replaced by a LOW value taken from the low end of the whole sample's
+    intensity distribution -- not from that protein's own average.
+
+    If a sample has fewer than 3 observed values (or no spread), the
+    distribution of ALL observed values is used for it instead.
 
     Operates on log-transformed intensities.
     """
@@ -98,22 +107,43 @@ class Imputer:
         df = dataframe.copy()
         values = df[samples].values.astype(float)
 
-        row_means = np.nanmean(values, axis=1)
-        row_stds = np.nanstd(values, axis=1)
-        row_stds = np.where(np.isnan(row_stds) | (row_stds == 0), 0.5, row_stds)
+        observed_all = values[~np.isnan(values)]
 
-        for i in range(values.shape[0]):
+        if observed_all.size < 3:
+            raise ValueError(
+                "Fewer than 3 observed values in the whole table -- "
+                "imputation is not possible."
+            )
 
-            missing_idx = np.isnan(values[i])
-            n_missing = missing_idx.sum()
+        global_mean = observed_all.mean()
+        global_sd = observed_all.std(ddof=1)
 
+        if not global_sd > 0:
+            raise ValueError("All observed values are identical -- imputation is not possible.")
+
+        for j in range(values.shape[1]):
+
+            column = values[:, j]
+            missing = np.isnan(column)
+
+            n_missing = int(missing.sum())
             if n_missing == 0:
                 continue
 
-            impute_mean = row_means[i] - self.downshift * row_stds[i]
-            impute_std = row_stds[i] * self.width
+            observed = column[~missing]
 
-            values[i, missing_idx] = rng.normal(impute_mean, impute_std, n_missing)
+            if observed.size >= 3 and observed.std(ddof=1) > 0:
+                col_mean, col_sd = observed.mean(), observed.std(ddof=1)
+            else:
+                col_mean, col_sd = global_mean, global_sd
+
+            column[missing] = rng.normal(
+                col_mean - self.downshift * col_sd,
+                self.width * col_sd,
+                n_missing
+            )
+
+            values[:, j] = column
 
         df[samples] = values
 

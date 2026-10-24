@@ -108,7 +108,7 @@ def group_assignment_widget(samples, key_prefix, suggested_map=None):
         st.session_state[state_key],
         column_config={"Sample": st.column_config.TextColumn(disabled=True)},
         hide_index=True,
-        use_container_width=True,
+        width="stretch",
         key=f"{key_prefix}_editor_{st.session_state[version_key]}"
     )
 

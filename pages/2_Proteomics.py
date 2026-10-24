@@ -23,6 +23,7 @@ from modules.transcriptomics.dnn_classifier import DNNClassifier
 from modules.transcriptomics.model_interpretation import ROCAnalysis, ModelInterpreter
 from modules.transcriptomics.plots import PlotFactory
 from modules.transcriptomics.result_display import display_results_table
+from modules.figure_studio.data_loader import load_file
 from modules.transcriptomics.pdf_report import generate_pdf_report
 
 require_active_plan()
@@ -52,15 +53,28 @@ with tabs[0]:
 
     if uploaded is not None:
 
-        if uploaded.name.endswith(".xlsx"):
-            data = pd.read_excel(uploaded)
-        else:
-            sep = "\t" if uploaded.name.endswith((".tsv", ".txt")) else ","
-            data = pd.read_csv(uploaded, sep=sep)
+        try:
+            data = load_file(uploaded)
+        except Exception as error:
+            st.error(f"Could not read this file: {error}")
+            data = None
 
-        st.session_state.proteomics_dataset = data
-        st.success(f"Uploaded: {len(data)} proteins, {len(data.columns) - 1} samples")
-        display_results_table(data, "prot_upload", default_index=4)
+        if data is not None:
+            for note in data.attrs.get("notes", []):
+                st.caption(f"ℹ️ {note}")
+
+            n_samples_found = len(detect_sample_columns(data))
+
+            if n_samples_found < 4:
+                st.error(
+                    f"Only {n_samples_found} numeric sample column(s) were found. "
+                    "Proteomics needs proteins as rows and at least 4 numeric sample "
+                    "columns (two groups with replicates)."
+                )
+            else:
+                st.session_state.proteomics_dataset = data
+                st.success(f"Uploaded: {len(data)} proteins, {n_samples_found} samples")
+                display_results_table(data, "prot_upload", default_index=4)
 
 with tabs[1]:
 
@@ -97,21 +111,47 @@ with tabs[1]:
                 0.3, 1.0, 0.7
             )
 
-            if st.button("Filter and Impute"):
-
-                prot_filter = ProteomicsFilter(
-                    st.session_state.proteomics_dataset, protein_column, samples
+            mv_method = st.radio(
+                "How should the remaining missing values be handled?",
+                [
+                    "Use the values each protein has (no imputation)",
+                    "Perseus-style imputation (replace with low values)"
+                ],
+                key="prot_mv_method",
+                help=(
+                    "No imputation: each protein is tested on the samples where it "
+                    "was measured (needs 2+ per group). Best when values are missing "
+                    "more or less at random, or only a few are missing. "
+                    "Perseus-style: use when a missing value means the protein was "
+                    "BELOW the detection limit (typical for abundant-vs-absent "
+                    "proteins); it fills gaps with low values drawn from each "
+                    "sample's own intensity distribution."
                 )
-                filtered = prot_filter.filter_by_group_detection(group_map, min_valid)
+            )
 
-                imputed = Imputer().impute(filtered, samples)
+            if st.button("Filter and Handle Missing Values"):
 
-                st.session_state.proteomics_filtered = imputed
+                try:
+                    prot_filter = ProteomicsFilter(
+                        st.session_state.proteomics_dataset, protein_column, samples
+                    )
+                    filtered = prot_filter.filter_by_group_detection(group_map, min_valid)
 
-                st.success(
-                    f"{len(filtered)} of {len(st.session_state.proteomics_dataset)} "
-                    "proteins retained and imputed."
-                )
+                    if mv_method.startswith("Perseus"):
+                        handled = Imputer().impute(filtered, samples)
+                        action = "imputed (Perseus-style)"
+                    else:
+                        handled = filtered
+                        action = "kept with their missing values (no imputation)"
+
+                    st.session_state.proteomics_filtered = handled
+
+                    st.success(
+                        f"{len(filtered)} of {len(st.session_state.proteomics_dataset)} "
+                        f"proteins retained and {action}."
+                    )
+                except ValueError as error:
+                    st.error(f"This step could not be run: {error}")
 
         if st.session_state.proteomics_filtered is not None:
             display_results_table(st.session_state.proteomics_filtered, "prot_filtered", default_index=4)
@@ -182,23 +222,38 @@ with tabs[3]:
 
             if group_a and group_b:
 
-                de = DifferentialExpression(data, group_a, group_b, already_normalized=True)
-                de_results = de.run()
+                de = None
+                de_results = None
 
-                st.session_state.proteomics_de_results = de_results
-                st.session_state.proteomics_de_groups = (group_a, group_b)
+                if len(group_a) < 2 or len(group_b) < 2:
+                    st.warning(
+                        f"Group A has {len(group_a)} sample(s) and Group B has "
+                        f"{len(group_b)}. Each group needs at least 2 samples "
+                        "(replicates) for a statistical test."
+                    )
+                else:
+                    try:
+                        de = DifferentialExpression(data, group_a, group_b, already_normalized=True)
+                        de_results = de.run()
+                    except ValueError as error:
+                        st.error(f"This comparison cannot be run: {error}")
+                        de = None
+
+                if de is not None and de_results is not None:
+                    st.session_state.proteomics_de_results = de_results
+                    st.session_state.proteomics_de_groups = (group_a, group_b)
                 
 
-                st.success(f"{int(de_results['Significant'].sum())} significant proteins")
-                display_results_table(de_results, "prot_de")
+                    st.success(f"{int(de_results['Significant'].sum())} significant proteins")
+                    display_results_table(de_results, "prot_de")
 
-                plot_factory = PlotFactory(de.df)
-                render_editable_plot(plot_factory.volcano_plot(de_results), "tx_volcano", default_title="Volcano plot")
+                    plot_factory = PlotFactory(de.df)
+                    render_editable_plot(plot_factory.volcano_plot(de_results), "tx_volcano", default_title="Volcano plot")
 
-                st.subheader("PCA")
-                pca_group_map = {s: "Group A" for s in group_a}
-                pca_group_map.update({s: "Group B" for s in group_b})
-                render_editable_plot(plot_factory.pca_plot(pca_group_map), "prot_pca", default_title="PCA plot")
+                    st.subheader("PCA")
+                    pca_group_map = {s: "Group A" for s in group_a}
+                    pca_group_map.update({s: "Group B" for s in group_b})
+                    render_editable_plot(plot_factory.pca_plot(pca_group_map), "prot_pca", default_title="PCA plot")
 
         else:
 
@@ -207,11 +262,14 @@ with tabs[3]:
 
             if len(set(valid_map.values())) >= 2 and st.button("Run ANOVA", key="prot_anova_run"):
 
-                mgde = MultiGroupDE(data, valid_map, protein_column, already_normalized=True)
-                anova_results = mgde.run()
+                try:
+                    mgde = MultiGroupDE(data, valid_map, protein_column, already_normalized=True)
+                    anova_results = mgde.run()
 
-                st.session_state.proteomics_de_results = anova_results
-                st.session_state.proteomics_multi_de_engine = mgde                
+                    st.session_state.proteomics_de_results = anova_results
+                    st.session_state.proteomics_multi_de_engine = mgde
+                except ValueError as error:
+                    st.error(f"ANOVA cannot be run: {error}")
 
                 st.success(f"{int(anova_results['Significant'].sum())} significant proteins")
                 display_results_table(anova_results, "prot_anova")
@@ -310,7 +368,6 @@ with tabs[5]:
         samples = detect_sample_columns(data)
 
         de_results = st.session_state.proteomics_de_results
-        significant_proteins = de_results.loc[de_results["Significant"], de_results.columns[0]].tolist()
 
         label_source = st.radio(
             "Sample Labels From",
@@ -332,47 +389,114 @@ with tabs[5]:
             st.info("No assignment found from that step yet — assign manually below.")
             group_map = group_assignment_widget(samples, key_prefix="prot_ml_manual")
 
-        if len(set(group_map.values())) >= 2 and significant_proteins:
+        if len(set(group_map.values())) >= 2:
+
+            st.info(
+                "Proteins are chosen INSIDE each cross-validation fold, using only "
+                "the training samples. Choosing proteins first with all samples "
+                "(for example 'significant proteins from DE') leaks the answer into "
+                "the test and reports inflated, even perfect, accuracy on pure noise."
+            )
+
+            select_k = st.slider(
+                "Number of top proteins to auto-select (per fold)", 10, 200, 50,
+                key="prot_select_k"
+            )
 
             fb = FeatureBuilder(data, protein_column)
-            X, y, features, nan_count = fb.build(group_map, gene_list=significant_proteins)
 
-            ml = MLClassifier(X, y)
+            X = None
+            try:
+                X, y, features, nan_count = fb.build(group_map, gene_list=None)
+            except ValueError as build_error:
+                st.error(str(build_error))
 
-            if st.button("Run Cross-Validation", key="prot_ml_run"):
+            if X is not None:
 
-                summary, detail = ml.evaluate(list(ml.models.keys()))
-                st.session_state.prot_ml_summary = summary
+                if nan_count > 0:
+                    st.warning(
+                        f"{nan_count} missing values found and filled with 0 "
+                        "for the machine-learning step only."
+                    )
 
-            if st.session_state.get("prot_ml_summary") is not None:
-                st.dataframe(st.session_state.prot_ml_summary)
+                ml = MLClassifier(X, y)
+                min_class = int(y.value_counts().min())
 
-                best_model = st.session_state.prot_ml_summary.iloc[0]["Model"]
+                if min_class < 2:
+                    st.error(
+                        "At least one class has fewer than 2 samples — "
+                        "cannot run cross-validation."
+                    )
+                else:
 
-                cm = ml.confusion_matrix_cv(best_model)
-                plot_factory = PlotFactory(data)
-                render_editable_plot(plot_factory.confusion_matrix_heatmap(cm), "prot_cm", default_title="Confusion Matrix")
-
-                roc_analysis = ROCAnalysis(ml, best_model)
-                curves = roc_analysis.curves()
-
-                col_roc, col_pr = st.columns(2)
-                with col_roc:
-                    render_editable_plot(plot_factory.roc_curve_plot(curves), "prot_roc", default_title="ROC Curve")
-                with col_pr:
-                    render_editable_plot(plot_factory.pr_curve_plot(curves), "prot_pr", default_title="Precision-Recall Curve")
-
-                if st.button("Compute SHAP Importance", key="prot_shap_btn"):
-                    final_pipeline = ml.fit_final_model(best_model)
-                    interpreter = ModelInterpreter(final_pipeline, ml.X)
-                    shap_values, shap_error = interpreter.compute()
-
-                    if shap_error:
-                        st.warning(shap_error)
+                    if min_class > 2:
+                        n_folds = st.slider(
+                            "Cross-Validation Folds", 2, min_class,
+                            min(int(ml.suggest_folds()), min_class), key="prot_n_folds"
+                        )
                     else:
-                        importance = interpreter.importance_table(shap_values)
-                        display_results_table(importance, "prot_shap_importance", default_index=1)
-                        render_editable_plot(plot_factory.shap_importance_plot(importance), "prot_shap", default_title="SHAP Importance")
+                        n_folds = 2
+                        st.caption(
+                            "The smallest group has only 2 samples, so 2-fold "
+                            "cross-validation is used."
+                        )
+
+                    model_options = list(ml.models.keys())
+                    selected_models = st.multiselect(
+                        "Models to Evaluate", model_options,
+                        default=model_options, key="prot_ml_models"
+                    )
+
+                    if selected_models and st.button("Run Cross-Validation", key="prot_ml_run"):
+
+                        with st.spinner("Running stratified cross-validation..."):
+                            summary, detail = ml.evaluate(
+                                selected_models, n_folds=n_folds, select_k=select_k
+                            )
+
+                        st.session_state.prot_ml_summary = summary
+                        st.session_state.prot_ml_select_k = select_k
+
+                    if st.session_state.get("prot_ml_summary") is not None:
+
+                        st.success("Cross-validation complete.")
+                        st.dataframe(st.session_state.prot_ml_summary)
+
+                        if X.shape[0] < 30:
+                            st.info(
+                                "With this few samples, even correctly implemented "
+                                "cross-validation can show very high or perfect scores — "
+                                "treat it as preliminary until confirmed on an "
+                                "independent, larger dataset."
+                            )
+
+                        best_model = st.session_state.prot_ml_summary.iloc[0]["Model"]
+                        k_used = st.session_state.get("prot_ml_select_k", select_k)
+
+                        cm = ml.confusion_matrix_cv(best_model, n_folds=n_folds, select_k=k_used)
+                        plot_factory = PlotFactory(data)
+                        render_editable_plot(plot_factory.confusion_matrix_heatmap(cm), "prot_cm", default_title="Confusion Matrix")
+
+                        roc_analysis = ROCAnalysis(ml, best_model, n_folds=n_folds, select_k=k_used)
+                        curves = roc_analysis.curves()
+
+                        col_roc, col_pr = st.columns(2)
+                        with col_roc:
+                            render_editable_plot(plot_factory.roc_curve_plot(curves), "prot_roc", default_title="ROC Curve")
+                        with col_pr:
+                            render_editable_plot(plot_factory.pr_curve_plot(curves), "prot_pr", default_title="Precision-Recall Curve")
+
+                        if st.button("Compute SHAP Importance", key="prot_shap_btn"):
+                            final_pipeline = ml.fit_final_model(best_model, select_k=k_used)
+                            interpreter = ModelInterpreter(final_pipeline, ml.X)
+                            shap_values, shap_error = interpreter.compute()
+
+                            if shap_error:
+                                st.warning(shap_error)
+                            else:
+                                importance = interpreter.importance_table(shap_values)
+                                display_results_table(importance, "prot_shap_importance", default_index=1)
+                                render_editable_plot(plot_factory.shap_importance_plot(importance), "prot_shap", default_title="SHAP Importance")
 
     else:
         st.info("Run Differential Expression first.")

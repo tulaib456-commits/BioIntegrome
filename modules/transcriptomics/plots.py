@@ -83,7 +83,13 @@ class PlotFactory:
 
         data = self.df[self.samples].astype(float)
 
-        variances = data.var(axis=1)
+        # PCA cannot use missing values. For this PICTURE ONLY (never for the
+        # statistics), each gap is filled with that gene's average and genes
+        # with no data at all are dropped.
+        data = data.dropna(how="all")
+        data = data.apply(lambda row: row.fillna(row.mean()), axis=1)
+
+        variances = data.var(axis=1).dropna()
 
         top_genes = variances.sort_values(
             ascending=False

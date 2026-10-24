@@ -15,6 +15,11 @@ def detect_gene_column(dataframe):
 
 
 def detect_sample_columns(dataframe):
+    """
+    Every NUMERIC column except the gene/protein column.
+    Text columns (e.g. a 'Description' or 'Biotype' annotation next to the
+    counts) are not samples and are skipped instead of breaking the maths.
+    """
 
     gene_column = detect_gene_column(dataframe)
 
@@ -25,6 +30,7 @@ def detect_sample_columns(dataframe):
         for column in dataframe.columns
 
         if column != gene_column
+        and pd.api.types.is_numeric_dtype(dataframe[column])
 
     ]
 

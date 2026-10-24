@@ -102,7 +102,7 @@ def render_editable_plot(fig, key_prefix, default_title="", enable_recolor=True)
     )
 
     st.plotly_chart(
-        fig, use_container_width=False, key=f"{key_prefix}_chart",
+        fig, width="content", key=f"{key_prefix}_chart",
         config={
             "toImageButtonOptions": {
                 "format": "png", "filename": key_prefix,

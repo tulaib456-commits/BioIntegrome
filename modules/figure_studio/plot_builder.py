@@ -155,25 +155,41 @@ class FigureBuilder:
 
     def grouped_comparison_with_stats(self, value_col, group_col, palette=None,
                                        title="", x_label="", y_label="",
-                                       plot_type="box", compare_all_pairs=True):
+                                       plot_type="box", compare_all_pairs=True,
+                                       test="auto", correction="holm",
+                                       show_ns=True):
         """
-        The key differentiator: a box/violin plot with automatic
-        statistical comparison brackets + significance stars drawn
-        between every pair of groups -- the single most tedious
-        thing to hand-code in R/ggplot2.
+        Box/violin plot with significance brackets between every pair of groups.
+
+        Statistics (what the stars mean):
+          test        'auto' (Shapiro-Wilk decides Welch t / Mann-Whitney),
+                      'welch', 'mannwhitney' or 'tukey' (Tukey HSD)
+          correction  'holm' (default), 'bonferroni', 'bh', 'none' --
+                      applied across ALL pairs, because testing many pairs
+                      without correction produces false positives.
+        The stars are based on the ADJUSTED p-values. The full table is kept
+        in self.last_pairwise_table so the page can show it under the figure.
         """
 
-        groups = sorted(self.df[group_col].dropna().unique())
+        from modules.figure_studio.statistics_toolkit import pairwise_comparisons
+
+        data = self.df[[group_col, value_col]].dropna()
+
+        # one fixed order, used by BOTH the plot and the brackets
+        groups = list(dict.fromkeys(data[group_col].tolist()))
+        order = {group_col: groups}
 
         if plot_type == "violin":
             fig = px.violin(
-                self.df, x=group_col, y=value_col, color=group_col,
-                color_discrete_sequence=palette, box=True, title=title
+                data, x=group_col, y=value_col, color=group_col,
+                color_discrete_sequence=palette, box=True, title=title,
+                category_orders=order
             )
         else:
             fig = px.box(
-                self.df, x=group_col, y=value_col, color=group_col,
-                color_discrete_sequence=palette, title=title
+                data, x=group_col, y=value_col, color=group_col,
+                color_discrete_sequence=palette, title=title,
+                category_orders=order
             )
 
         fig.update_layout(
@@ -182,59 +198,48 @@ class FigureBuilder:
             showlegend=False
         )
 
-        max_val = self.df[value_col].max()
-        min_val = self.df[value_col].min()
-        value_range = max_val - min_val
+        self.last_pairwise_table = None
 
-        pairs = []
-        if compare_all_pairs:
-            for i in range(len(groups)):
-                for j in range(i + 1, len(groups)):
-                    pairs.append((groups[i], groups[j]))
+        usable = [g for g in groups if (data[data[group_col] == g][value_col].notna().sum() >= 2)]
+        if len(usable) < 2 or not compare_all_pairs:
+            return fig
+
+        table = pairwise_comparisons(
+            {g: data[data[group_col] == g][value_col].values for g in usable},
+            test=test, correction=correction
+        )
+        self.last_pairwise_table = table
+
+        max_val = data[value_col].max()
+        min_val = data[value_col].min()
+        value_range = (max_val - min_val) or 1.0
 
         bracket_level = 0
 
-        for group_a, group_b in pairs:
+        for _, row in table.iterrows():
 
-            vals_a = self.df[self.df[group_col] == group_a][value_col].dropna()
-            vals_b = self.df[self.df[group_col] == group_b][value_col].dropna()
-
-            if len(vals_a) < 2 or len(vals_b) < 2:
+            if not show_ns and not row["Significant"]:
                 continue
 
-            t_stat, p_value = stats.ttest_ind(vals_a, vals_b, equal_var=False)
-
-            if p_value < 0.001:
-                stars = "***"
-            elif p_value < 0.01:
-                stars = "**"
-            elif p_value < 0.05:
-                stars = "*"
-            else:
-                stars = "ns"
-
-            x_a = groups.index(group_a)
-            x_b = groups.index(group_b)
+            x_a = groups.index(row["Group_1"])
+            x_b = groups.index(row["Group_2"])
 
             y_bracket = max_val + value_range * (0.08 + bracket_level * 0.12)
             bracket_level += 1
 
-            fig.add_shape(
-                type="line", x0=x_a, x1=x_a, y0=y_bracket - value_range * 0.02,
-                y1=y_bracket, line=dict(color="black", width=1.2)
-            )
-            fig.add_shape(
-                type="line", x0=x_b, x1=x_b, y0=y_bracket - value_range * 0.02,
-                y1=y_bracket, line=dict(color="black", width=1.2)
-            )
-            fig.add_shape(
-                type="line", x0=x_a, x1=x_b, y0=y_bracket, y1=y_bracket,
-                line=dict(color="black", width=1.2)
-            )
+            for xs, ys in (
+                ((x_a, x_a), (y_bracket - value_range * 0.02, y_bracket)),
+                ((x_b, x_b), (y_bracket - value_range * 0.02, y_bracket)),
+                ((x_a, x_b), (y_bracket, y_bracket)),
+            ):
+                fig.add_shape(
+                    type="line", x0=xs[0], x1=xs[1], y0=ys[0], y1=ys[1],
+                    line=dict(color="black", width=1.2)
+                )
 
             fig.add_annotation(
                 x=(x_a + x_b) / 2, y=y_bracket + value_range * 0.02,
-                text=stars, showarrow=False,
+                text=row["Stars"], showarrow=False,
                 font=dict(size=16, color="black")
             )
 
@@ -307,7 +312,22 @@ class FigureBuilder:
     def forest_plot(self, label_col, estimate_col, ci_lower_col, ci_upper_col,
                     title="", x_label="Effect Size", reference_line=0):
 
-        data = self.df.sort_values(estimate_col)
+        if len({label_col, estimate_col, ci_lower_col, ci_upper_col}) < 4:
+            raise ValueError(
+                "Label, Estimate, Lower CI and Upper CI must be four DIFFERENT columns."
+            )
+
+        data = self.df[[label_col, estimate_col, ci_lower_col, ci_upper_col]].dropna()
+
+        bad = (data[ci_lower_col] > data[estimate_col]) | (data[ci_upper_col] < data[estimate_col])
+        if bad.any():
+            raise ValueError(
+                "Lower CI must be <= estimate <= Upper CI in every row "
+                f"(check row(s): {', '.join(str(i + 2) for i in data.index[bad][:5])} "
+                "of your file, counting the header as row 1)."
+            )
+
+        data = data.sort_values(estimate_col)
 
         fig = go.Figure()
 
@@ -402,6 +422,19 @@ class FigureBuilder:
             found = True
         return found
 
+    @staticmethod
+    def _axis_positive(fig, axis):
+        """A log scale needs every value > 0; otherwise Plotly silently drops points."""
+        for trace in fig.data:
+            values = getattr(trace, axis, None)
+            if values is None:
+                continue
+            arr = np.asarray(values, dtype=float)
+            arr = arr[~np.isnan(arr)]
+            if arr.size and arr.min() <= 0:
+                return False
+        return True
+
     def customize_layout(self, fig, x_axis_title=None, y_axis_title=None,
                          x_tick_font_size=12, y_tick_font_size=12,
                          axis_title_font_size=16, axis_title_bold=False,
@@ -461,9 +494,9 @@ class FigureBuilder:
         # The axis type is touched ONLY when the user asks for a log scale
         # AND the axis is numeric. Otherwise Plotly keeps its own
         # auto-detected type (category / date / linear).
-        if x_scale == "log" and self._axis_is_numeric(fig, "x"):
+        if x_scale == "log" and self._axis_is_numeric(fig, "x") and self._axis_positive(fig, "x"):
             fig.update_xaxes(type="log")
-        if y_scale == "log" and self._axis_is_numeric(fig, "y"):
+        if y_scale == "log" and self._axis_is_numeric(fig, "y") and self._axis_positive(fig, "y"):
             fig.update_yaxes(type="log")
 
         if x_range:

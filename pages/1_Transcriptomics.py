@@ -393,16 +393,25 @@ with tabs[4]:
 
         if st.button("Apply Normalization"):
 
-            normalizer = Normalizer(st.session_state.filtered)
+            try:
+                normalizer = Normalizer(st.session_state.filtered)
 
-            if normalization_method == "CPM":
-                normalized = normalizer.cpm()
-            elif normalization_method == "Log2 CPM":
-                normalized = normalizer.log2_cpm()
-            else:
-                normalized = normalizer.median_of_ratios()
+                if normalization_method == "CPM":
+                    normalized = normalizer.cpm()
+                elif normalization_method == "Log2 CPM":
+                    normalized = normalizer.log2_cpm()
+                else:
+                    normalized = normalizer.median_of_ratios()
 
-            st.session_state.normalized = normalized
+                st.session_state.normalized = normalized
+
+                if getattr(normalizer, "size_factor_method", None) == "poscounts":
+                    st.info(
+                        "No gene had a non-zero count in every sample, so the "
+                        "DESeq2 'poscounts' variant of median-of-ratios was used."
+                    )
+            except ValueError as error:
+                st.error(f"Normalization could not be run: {error}")
 
         if st.session_state.normalized is not None:
 
@@ -496,59 +505,82 @@ with tabs[5]:
 
             if group_a and group_b:
 
-                de = DifferentialExpression(
-                    st.session_state.filtered,
-                    group_a,
-                    group_b
-                )
+                de = None
+                de_results = None
 
-                de_results = de.run(
-                    fdr_threshold=fdr_threshold,
-                    log2fc_threshold=log2fc_threshold
-                )
+                if len(group_a) < 2 or len(group_b) < 2:
+                    st.warning(
+                        f"Group A has {len(group_a)} sample(s) and Group B has "
+                        f"{len(group_b)}. Each group needs at least 2 samples "
+                        "(replicates) for a statistical test."
+                    )
+                else:
+                    try:
+                        de = DifferentialExpression(
+                            st.session_state.filtered,
+                            group_a,
+                            group_b
+                        )
 
-                st.session_state.de_results = de_results
-                st.session_state.de_groups = (group_a, group_b)
+                        de_results = de.run(
+                            fdr_threshold=fdr_threshold,
+                            log2fc_threshold=log2fc_threshold
+                        )
+                    except ValueError as error:
+                        st.error(f"This comparison cannot be run: {error}")
+                        de = None
 
-                significant_count = int(
-                    de_results["Significant"].sum()
-                )
+                if de is not None and de_results is not None:
 
-                st.success(
-                    f"{significant_count} significant genes found "
-                    f"out of {len(de_results)}"
-                )
+                    st.session_state.de_results = de_results
+                    st.session_state.de_groups = (group_a, group_b)
 
-                display_results_table(de_results, "de_two_group")
+                    significant_count = int(
+                        de_results["Significant"].sum()
+                    )
 
-                st.subheader("Volcano Plot")
+                    st.success(
+                        f"{significant_count} significant genes found "
+                        f"out of {len(de_results)}"
+                    )
 
-                plot_factory = PlotFactory(de.df)
+                    if getattr(de, "n_untestable", 0):
+                        st.caption(
+                            f"{de.n_untestable} gene(s) could not be tested (fewer than 2 "
+                            "valid values in a group, or no variation) and were left out of "
+                            "the FDR correction."
+                        )
 
-                render_editable_plot(
-                    plot_factory.volcano_plot(
-                        de_results,
-                        log2fc_threshold=log2fc_threshold
-                    ),
-                    "de_volcano",
-                    default_title="Volcano Plot"
-                )
+                    display_results_table(de_results, "de_two_group")
+
+                    st.subheader("Volcano Plot")
+
+                    plot_factory = PlotFactory(de.df)
+
+                    render_editable_plot(
+                        plot_factory.volcano_plot(
+                            de_results,
+                            log2fc_threshold=log2fc_threshold
+                        ),
+                        "de_volcano",
+                        default_title="Volcano Plot"
+                    )
                 
 
-                st.subheader("PCA")
+                    st.subheader("PCA")
 
-                group_map = {
-                    sample: "Group A" for sample in group_a
-                }
-                group_map.update(
-                    {sample: "Group B" for sample in group_b}
-                )
+                    group_map = {
+                        sample: "Group A" for sample in group_a
+                    }
+                    group_map.update(
+                        {sample: "Group B" for sample in group_b}
+                    )
 
-                render_editable_plot(
-                    plot_factory.pca_plot(group_map),
-                    "de_pca",
-                    default_title="PCA Plot"
-                )
+                    render_editable_plot(
+                        plot_factory.pca_plot(group_map),
+                        "de_pca",
+                        default_title="PCA Plot"
+                    )
 
             else:
 
@@ -598,19 +630,22 @@ with tabs[5]:
 
                 if st.button("Run Multi-Group ANOVA"):
 
-                    mgde = MultiGroupDE(
-                        st.session_state.filtered,
-                        valid_map,
-                        gene_column
-                    )
+                    try:
+                        mgde = MultiGroupDE(
+                            st.session_state.filtered,
+                            valid_map,
+                            gene_column
+                        )
 
-                    anova_results = mgde.run(
-                        fdr_threshold=anova_fdr,
-                        min_effect_size=anova_effect_size
-                    )
+                        anova_results = mgde.run(
+                            fdr_threshold=anova_fdr,
+                            min_effect_size=anova_effect_size
+                        )
 
-                    st.session_state.multi_de_results = anova_results
-                    st.session_state.multi_de_engine = mgde
+                        st.session_state.multi_de_results = anova_results
+                        st.session_state.multi_de_engine = mgde
+                    except ValueError as error:
+                        st.error(f"ANOVA cannot be run: {error}")
 
                 if st.session_state.get("multi_de_results") is not None:
 
@@ -679,7 +714,10 @@ with tabs[5]:
 
                         posthoc_table = mgde.posthoc(selected_gene)
 
-                        st.dataframe(posthoc_table)
+                        if posthoc_table is None:
+                            st.info("Not enough valid values for this gene to run Tukey HSD.")
+                        else:
+                            st.dataframe(posthoc_table)
 
     else:
 
@@ -834,45 +872,17 @@ with tabs[7]:
                 pd.Series(list(group_map.values())).value_counts().to_dict()
             )
 
-            feature_source = st.radio(
-                "Feature Selection",
-                [
-                    "Use significant genes from DE/ANOVA",
-                    "Auto-select top genes inside cross-validation (recommended)"
-                ],
-                horizontal=True
+            st.info(
+                "Genes are chosen INSIDE each cross-validation fold, using only "
+                "the training samples. Choosing genes first with all samples "
+                "(for example 'significant genes from DE') leaks the answer into "
+                "the test and reports inflated, even perfect, accuracy on pure noise."
             )
 
             gene_list = None
-            select_k = None
-
-            if feature_source == "Use significant genes from DE/ANOVA":
-
-                sig_genes = []
-
-                if st.session_state.get("de_results") is not None:
-                    de_r = st.session_state.de_results
-                    sig_genes = de_r.loc[de_r["Significant"], "Gene"].tolist()
-                elif st.session_state.get("multi_de_results") is not None:
-                    mde_r = st.session_state.multi_de_results
-                    sig_genes = mde_r.loc[mde_r["Significant"], "Gene"].tolist()
-
-                if not sig_genes:
-                    st.warning(
-                        "No significant genes found from DE/ANOVA yet. "
-                        "Falling back to automatic selection."
-                    )
-                    select_k = st.slider(
-                        "Number of top genes to auto-select", 10, 200, 50
-                    )
-                else:
-                    gene_list = sig_genes
-                    st.caption(f"Using {len(gene_list)} significant genes as features.")
-
-            else:
-                select_k = st.slider(
-                    "Number of top genes to auto-select (per fold)", 10, 200, 50
-                )
+            select_k = st.slider(
+                "Number of top genes to auto-select (per fold)", 10, 200, 50
+            )
 
             fb = FeatureBuilder(st.session_state.filtered, gene_column)
 
@@ -903,10 +913,17 @@ with tabs[7]:
                     )
                 else:
 
-                    n_folds = st.slider(
-                        "Cross-Validation Folds",
-                        2, min_class, int(ml.suggest_folds())
-                    )
+                    if min_class > 2:
+                        n_folds = st.slider(
+                            "Cross-Validation Folds",
+                            2, min_class, min(int(ml.suggest_folds()), min_class)
+                        )
+                    else:
+                        n_folds = 2
+                        st.caption(
+                            "The smallest group has only 2 samples, so 2-fold "
+                            "cross-validation is used."
+                        )
 
                     model_options = list(ml.models.keys())
 

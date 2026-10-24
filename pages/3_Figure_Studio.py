@@ -4,7 +4,11 @@ import pandas as pd
 import streamlit as st
 
 from modules.auth import require_login
-from modules.figure_studio.data_loader import load_file, detect_column_types
+from modules.figure_studio.data_loader import load_file, list_sheets, detect_column_types
+from modules.figure_studio.data_prep import (
+    suggest_layout, wide_to_long, code_like_columns, as_categories,
+    paired_arrays, looks_like_id
+)
 from modules.figure_studio.plot_builder import FigureBuilder
 from modules.figure_studio.themes import PALETTES, THEMES, FONT_FAMILIES, apply_theme
 from modules.figure_studio.export_component import render_exportable_plot
@@ -19,18 +23,109 @@ st.caption(
     "your browser."
 )
 
-uploaded = st.file_uploader("Upload your data", type=["csv", "tsv", "xlsx"])
+uploaded = st.file_uploader("Upload your data", type=["csv", "tsv", "txt", "xlsx"])
 
 if uploaded is not None:
 
-    df = load_file(uploaded)
+    sheet = None
+    try:
+        sheets = list_sheets(uploaded)
+        if len(sheets) > 1:
+            sheet = st.selectbox("Which Excel sheet?", sheets)
+        raw_df = load_file(uploaded, sheet_name=sheet)
+    except Exception as error:
+        st.error(f"Could not read this file. Details: {error}")
+        st.stop()
+
+    for note in raw_df.attrs.get("notes", []):
+        st.caption(f"ℹ️ {note}")
+
+    st.subheader("1. Your data")
+    display_results_table(raw_df, "fs_data", default_index=4)
+
+    # ---------------- how is the data arranged?
+    st.subheader("2. How is your data arranged?")
+
+    suggested = suggest_layout(raw_df)
+    layout = st.radio(
+        "Layout",
+        [
+            "Long — one column says which group each row belongs to (e.g. Group | Value)",
+            "Wide — each group or time point is its own column (e.g. ID | Before | After)",
+        ],
+        index=1 if suggested == "wide" else 0,
+        key="fs_layout",
+        help="Most Excel sheets for paired data (Before/After) are 'wide'. "
+             "Figure Studio converts them automatically."
+    )
+
+    df = raw_df
+    wide_id_col = None
+
+    if layout.startswith("Wide"):
+
+        raw_numeric, raw_categorical = detect_column_types(raw_df)
+
+        id_options = [None] + list(raw_df.columns)
+        id_default = next(
+            (c for c in raw_df.columns if looks_like_id(c, raw_df[c])), None
+        )
+        wide_id_col = st.selectbox(
+            "Subject / sample ID column (optional, needed for paired tests)",
+            id_options,
+            index=id_options.index(id_default) if id_default in id_options else 0,
+            format_func=lambda c: "(none)" if c is None else str(c),
+            key="fs_wide_id"
+        )
+
+        candidates = [c for c in raw_numeric if c != wide_id_col]
+        value_cols = st.multiselect(
+            "Columns to compare (each becomes one group)",
+            candidates, default=candidates, key=f"fs_wide_cols_{wide_id_col}"
+        )
+
+        if len(value_cols) < 2:
+            st.warning("Pick at least 2 columns to compare.")
+            st.stop()
+
+        try:
+            df, _group_name, _value_name = wide_to_long(
+                raw_df, value_cols, id_col=wide_id_col
+            )
+        except ValueError as error:
+            st.error(str(error))
+            st.stop()
+
+        st.caption(
+            f"Reshaped to long format: {len(df)} rows with the columns "
+            f"{', '.join(map(str, df.columns))}. Use '{_group_name}' as the "
+            f"group and '{_value_name}' as the value in the plots below."
+        )
+
+    else:
+        codes = code_like_columns(raw_df)
+        if codes:
+            as_cat = st.multiselect(
+                "These numeric columns look like group codes (e.g. 0/1/2). "
+                "Treat them as categories?",
+                codes, key="fs_codes"
+            )
+            if as_cat:
+                df = as_categories(raw_df, as_cat)
+
     st.session_state.figure_studio_data = df
 
-    display_results_table(df, "fs_data", default_index=4)
-
     numeric_cols, categorical_cols = detect_column_types(df)
+
+    # After reshaping a wide table, offer the new Value column first so every
+    # dropdown starts on the right column (not on the ID column).
+    if layout.startswith("Wide") and _value_name in numeric_cols:
+        numeric_cols = [_value_name] + [c for c in numeric_cols if c != _value_name]
+
     all_cols = list(df.columns)
     builder = FigureBuilder(df)
+
+    st.subheader("3. Plot")
 
     st.divider()
 
@@ -79,6 +174,18 @@ if uploaded is not None:
     plot_note = None
 
     try:
+
+        if plot_type != "Venn Diagram (2-set)" and not numeric_cols:
+            raise ValueError(
+                "this plot needs at least one numeric column, and your table has none."
+            )
+
+        if plot_type in ("Box Plot", "Violin Plot", "Grouped Comparison (with significance stats)") \
+                and not categorical_cols:
+            raise ValueError(
+                "this plot needs a text column that names the groups. Choose the "
+                "'Wide' layout above if each group is its own column."
+            )
 
         if plot_type == "Bar Chart":
             x = st.selectbox("X axis", categorical_cols + numeric_cols, key="bar_x")
@@ -141,8 +248,38 @@ if uploaded is not None:
             value_col = st.selectbox("Value column", numeric_cols, key="gc_val")
             group_col = st.selectbox("Group column", categorical_cols, key="gc_grp")
             sub_type = st.radio("Style", ["box", "violin"], horizontal=True)
+
+            col_s1, col_s2 = st.columns(2)
+            with col_s1:
+                gc_test_label = st.selectbox(
+                    "Statistical test between groups",
+                    ["Automatic (Shapiro-Wilk decides)", "Welch's t-test",
+                     "Mann-Whitney U (non-parametric)", "Tukey HSD (after ANOVA)"],
+                    key="gc_test"
+                )
+            with col_s2:
+                gc_corr_label = st.selectbox(
+                    "Multiple-comparison correction",
+                    ["Holm (recommended)", "Bonferroni", "Benjamini-Hochberg (FDR)",
+                     "None (not recommended)"],
+                    key="gc_corr",
+                    disabled=gc_test_label.startswith("Tukey")
+                )
+            gc_show_ns = st.checkbox("Show non-significant (ns) brackets", value=True, key="gc_ns")
+
+            gc_test = {"Automatic": "auto", "Welch": "welch",
+                       "Mann-Whitney": "mannwhitney", "Tukey": "tukey"}[
+                next(k for k in ("Automatic", "Welch", "Mann-Whitney", "Tukey")
+                     if gc_test_label.startswith(k))]
+            gc_corr = {"Holm": "holm", "Bonferroni": "bonferroni",
+                       "Benjamini-Hochberg": "bh", "None": "none"}[
+                next(k for k in ("Holm", "Bonferroni", "Benjamini-Hochberg", "None")
+                     if gc_corr_label.startswith(k))]
+
             fig = builder.grouped_comparison_with_stats(
-                value_col, group_col, active_palette, title=title, plot_type=sub_type
+                value_col, group_col, active_palette, title=title,
+                plot_type=sub_type, test=gc_test, correction=gc_corr,
+                show_ns=gc_show_ns
             )
 
         elif plot_type == "Kaplan-Meier Survival Curve":
@@ -217,8 +354,13 @@ if uploaded is not None:
                 "One line per subject (e.g. patient) connecting its values "
                 "across time points or conditions."
             )
-            id_col = st.selectbox("Subject ID column", all_cols, key="pa_id")
-            time_col = st.selectbox("Time / condition column", all_cols, key="pa_time")
+            _pa_id_default = wide_id_col if (layout.startswith("Wide") and wide_id_col) else (
+                "Row" if (layout.startswith("Wide") and "Row" in all_cols) else all_cols[0])
+            _pa_time_default = _group_name if layout.startswith("Wide") else all_cols[min(1, len(all_cols) - 1)]
+            id_col = st.selectbox("Subject ID column", all_cols,
+                                  index=all_cols.index(_pa_id_default), key="pa_id")
+            time_col = st.selectbox("Time / condition column", all_cols,
+                                    index=all_cols.index(_pa_time_default), key="pa_time")
             value_col = st.selectbox("Value column", numeric_cols, key="pa_val")
             time_order = st.multiselect(
                 "Order of time points / conditions (left to right)",
@@ -304,6 +446,11 @@ if uploaded is not None:
                 title_font_size=title_size, title_position=title_pos
             )
 
+        if x_scale == "log" and fig.layout.xaxis.type != "log":
+            st.warning("Log scale was NOT applied to the X axis: it needs numeric values that are all above 0.")
+        if y_scale == "log" and fig.layout.yaxis.type != "log":
+            st.warning("Log scale was NOT applied to the Y axis: it needs numeric values that are all above 0.")
+
         # Kaplan-Meier: show the log-rank test result next to the figure
         if km_result is not None:
             p_val = km_result["p_value"]
@@ -330,6 +477,23 @@ if uploaded is not None:
             "always works. The SVG opens in Illustrator, Inkscape or "
             "PowerPoint with editable text and shapes."
         )
+
+        pairwise_table = getattr(builder, "last_pairwise_table", None)
+        if plot_type.startswith("Grouped Comparison") and pairwise_table is not None:
+            st.subheader("Statistics behind the stars")
+            shown = pairwise_table[
+                ["Group_1", "Group_2", "n1", "n2", "Mean_Diff", "Test",
+                 "P_Value", "Adj_P_Value", "Correction", "Stars"]
+            ]
+            st.dataframe(
+                shown.style.format({"Mean_Diff": "{:.3f}", "P_Value": "{:.4g}", "Adj_P_Value": "{:.4g}"}),
+                width="stretch"
+            )
+            st.caption(
+                "Stars are based on the ADJUSTED p-value: * < 0.05, ** < 0.01, "
+                "*** < 0.001, ns = not significant. Report the test and the correction "
+                "in your figure legend. Groups with fewer than 2 values are left out."
+            )
 
         with st.expander("Other formats (PDF) — server-side, may not work on the cloud"):
 
@@ -384,70 +548,176 @@ if uploaded is not None:
             test_categorical_association
         )
 
-        test_kind = st.selectbox(
-            "Test Type",
-            ["Compare 2 Groups", "Compare 3+ Groups", "Correlation", "Categorical Association (Chi-square)"]
+        test_options = ["Compare 2 Groups", "Compare 3+ Groups", "Correlation",
+                        "Categorical Association (Chi-square)"]
+        test_kind = st.selectbox("Test Type", test_options)
+
+        if not numeric_cols and not test_kind.startswith("Categorical"):
+            st.info("This test needs at least one numeric column, and your table has none.")
+            st.stop()
+
+        no_groups_msg = (
+            "This test needs a column that says which group each row belongs to, "
+            "and your table has none. If each group is its own column "
+            "(e.g. Before | After), choose the 'Wide' layout in step 2 above."
         )
 
-        if test_kind == "Compare 2 Groups":
-            value_col = st.selectbox("Value column", numeric_cols, key="stat_val2")
-            group_col = st.selectbox("Group column", categorical_cols, key="stat_grp2")
-            groups = df[group_col].dropna().unique().tolist()
-            if len(groups) >= 2:
-                g1 = st.selectbox("Group 1", groups, index=0, key="stat_g1")
-                g2 = st.selectbox("Group 2", groups, index=1, key="stat_g2")
-                paired = st.checkbox("Paired/repeated measures?")
-                if st.button("Run Test"):
-                    values_1 = df[df[group_col] == g1][value_col].dropna().values
-                    values_2 = df[df[group_col] == g2][value_col].dropna().values
-                    if paired and len(values_1) != len(values_2):
-                        st.error(
-                            "A paired test needs the same number of values in "
-                            f"both groups (Group 1 has {len(values_1)}, "
-                            f"Group 2 has {len(values_2)})."
-                        )
+        try:
+
+            if test_kind == "Compare 2 Groups":
+
+                if not categorical_cols:
+                    st.info(no_groups_msg)
+                else:
+                    value_col = st.selectbox("Value column", numeric_cols, key="stat_val2")
+                    group_col = st.selectbox("Group column", categorical_cols, key="stat_grp2")
+                    groups = df[group_col].dropna().unique().tolist()
+
+                    if len(groups) < 2:
+                        st.info(f"'{group_col}' has only one group, so there is nothing to compare.")
                     else:
-                        result = compare_two_groups(values_1, values_2, paired=paired)
+                        g1 = st.selectbox("Group 1", groups, index=0, key="stat_g1")
+                        g2 = st.selectbox("Group 2", groups, index=1, key="stat_g2")
+                        paired = st.checkbox(
+                            "Paired / repeated measures (same subject measured twice)",
+                            value=(layout.startswith("Wide") and wide_id_col is not None),
+                            key="stat_paired"
+                        )
+
+                        id_for_pairs = None
+                        if paired:
+                            id_default = (wide_id_col if (layout.startswith("Wide") and wide_id_col)
+                                          else "Row" if (layout.startswith("Wide") and "Row" in all_cols)
+                                          else next((c for c in all_cols if looks_like_id(c, df[c])), all_cols[0]))
+                            id_for_pairs = st.selectbox(
+                                "Subject ID column (links the two measurements of one subject)",
+                                all_cols, index=all_cols.index(id_default), key="stat_pair_id"
+                            )
+
+                        if g1 == g2:
+                            st.warning("Choose two different groups.")
+                        elif st.button("Run Test", key="stat_run2"):
+
+                            if paired:
+                                values_1, values_2, n_dropped = paired_arrays(
+                                    df, id_for_pairs, group_col, value_col, g1, g2
+                                )
+                                if n_dropped:
+                                    st.caption(
+                                        f"{n_dropped} subject(s) lacked a value in one of the two "
+                                        "conditions and were left out of the paired test."
+                                    )
+                            else:
+                                values_1 = df[df[group_col] == g1][value_col].dropna().values
+                                values_2 = df[df[group_col] == g2][value_col].dropna().values
+
+                            result = compare_two_groups(values_1, values_2, paired=paired)
+
+                            st.write(f"**Method (auto-selected):** {result['method']}")
+                            st.write(f"**Sample size:** n = {result['n_a']} vs {result['n_b']}")
+                            st.write(f"**Means:** {result['mean_a']:.4g} vs {result['mean_b']:.4g}")
+                            st.write(f"**Statistic:** {result['statistic']:.4f}")
+                            st.write(f"**P-value:** {result['p_value']:.6f}")
+                            st.write(f"**Significant (p<0.05):** {result['significant']}")
+                            st.write(f"**{result['effect_size_name']} (effect size):** {result['cohens_d']:.3f}")
+                            if paired and result["normality_diff"]:
+                                st.caption(f"Differences normality: {result['normality_diff']['note']}")
+                            else:
+                                st.caption(f"Group 1 normality: {result['normality_a']['note']}")
+                                st.caption(f"Group 2 normality: {result['normality_b']['note']}")
+                            if result["note"]:
+                                st.warning(result["note"])
+
+            elif test_kind == "Compare 3+ Groups":
+
+                if not categorical_cols:
+                    st.info(no_groups_msg)
+                else:
+                    value_col = st.selectbox("Value column", numeric_cols, key="stat_val3")
+                    group_col = st.selectbox("Group column", categorical_cols, key="stat_grp3")
+
+                    if st.button("Run Test", key="stat_run3"):
+                        groups_dict = {
+                            g: df[df[group_col] == g][value_col].dropna().values
+                            for g in df[group_col].dropna().unique()
+                        }
+                        result = compare_multiple_groups(groups_dict)
                         st.write(f"**Method (auto-selected):** {result['method']}")
                         st.write(f"**Statistic:** {result['statistic']:.4f}")
                         st.write(f"**P-value:** {result['p_value']:.6f}")
                         st.write(f"**Significant (p<0.05):** {result['significant']}")
-                        st.write(f"**Cohen's d (effect size):** {result['cohens_d']:.3f}")
-                        st.caption(f"Group 1 normality: {result['normality_a']['note']}")
-                        st.caption(f"Group 2 normality: {result['normality_b']['note']}")
+                        if result["dropped_groups"]:
+                            st.warning(
+                                "Left out (fewer than 2 values): "
+                                + ", ".join(result["dropped_groups"])
+                            )
+                        summary_table = pd.DataFrame({
+                            "Group": list(result["group_means"]),
+                            "n": [result["group_n"][g] for g in result["group_means"]],
+                            "Mean": list(result["group_means"].values()),
+                        })
+                        st.dataframe(summary_table, width="stretch")
 
-        elif test_kind == "Compare 3+ Groups":
-            value_col = st.selectbox("Value column", numeric_cols, key="stat_val3")
-            group_col = st.selectbox("Group column", categorical_cols, key="stat_grp3")
-            if st.button("Run Test", key="stat_run3"):
-                groups_dict = {g: df[df[group_col] == g][value_col].dropna().values
-                              for g in df[group_col].dropna().unique()}
-                result = compare_multiple_groups(groups_dict)
-                st.write(f"**Method (auto-selected):** {result['method']}")
-                st.write(f"**Statistic:** {result['statistic']:.4f}")
-                st.write(f"**P-value:** {result['p_value']:.6f}")
-                st.write(f"**Significant (p<0.05):** {result['significant']}")
-                st.dataframe(result["group_means"])
+                        if result["posthoc"] is not None:
+                            st.write("**Post-hoc pairwise comparisons** "
+                                     "(Tukey HSD after ANOVA; Mann-Whitney with Holm correction after Kruskal-Wallis):")
+                            st.dataframe(
+                                result["posthoc"][["Group_1", "Group_2", "Mean_Diff", "Test",
+                                                   "P_Value", "Adj_P_Value", "Stars"]],
+                                width="stretch"
+                            )
+                        elif result["significant"] is False:
+                            st.caption("No post-hoc tests are shown because the overall test is not significant.")
 
-        elif test_kind == "Correlation":
-            x_col = st.selectbox("X variable", numeric_cols, key="stat_corr_x")
-            y_col = st.selectbox("Y variable", numeric_cols, key="stat_corr_y")
-            if st.button("Run Test", key="stat_run_corr"):
-                pair = df[[x_col, y_col]].dropna()
-                result = test_correlation(pair[x_col], pair[y_col])
-                st.write(f"**Method (auto-selected):** {result['method']}")
-                st.write(f"**r:** {result['r']:.4f}")
-                st.write(f"**P-value:** {result['p_value']:.6f}")
+            elif test_kind == "Correlation":
 
-        else:
-            cat_a = st.selectbox("Categorical variable A", categorical_cols, key="stat_cat_a")
-            cat_b = st.selectbox("Categorical variable B", categorical_cols, key="stat_cat_b")
-            if st.button("Run Test", key="stat_run_chi"):
-                table = pd.crosstab(df[cat_a], df[cat_b])
-                result = test_categorical_association(table)
-                st.write(f"**Chi-square:** {result['chi2']:.4f}")
-                st.write(f"**P-value:** {result['p_value']:.6f}")
-                st.write(f"**Degrees of freedom:** {result['dof']}")
+                if len(numeric_cols) < 2:
+                    st.info("Correlation needs at least 2 numeric columns.")
+                else:
+                    x_col = st.selectbox("X variable", numeric_cols, key="stat_corr_x")
+                    y_col = st.selectbox("Y variable", numeric_cols,
+                                         index=min(1, len(numeric_cols) - 1), key="stat_corr_y")
+                    if st.button("Run Test", key="stat_run_corr"):
+                        pair = df[[x_col, y_col]].dropna()
+                        result = test_correlation(pair[x_col].values, pair[y_col].values)
+                        st.write(f"**Method (auto-selected):** {result['method']}")
+                        st.write(f"**Complete pairs used:** n = {result['n']}")
+                        st.write(f"**r:** {result['r']:.4f}")
+                        st.write(f"**P-value:** {result['p_value']:.6f}")
+
+            else:
+
+                if len(categorical_cols) < 2:
+                    st.info(
+                        "The chi-square test compares two categorical columns "
+                        "(e.g. Treatment and Outcome). Your table has fewer than two. "
+                        "Numeric 0/1/2 codes can be turned into categories in step 2."
+                    )
+                else:
+                    cat_a = st.selectbox("Categorical variable A", categorical_cols, key="stat_cat_a")
+                    cat_b = st.selectbox("Categorical variable B", categorical_cols,
+                                         index=1, key="stat_cat_b")
+                    if cat_a == cat_b:
+                        st.warning("Choose two different columns.")
+                    elif st.button("Run Test", key="stat_run_chi"):
+                        table = pd.crosstab(df[cat_a], df[cat_b])
+                        result = test_categorical_association(table.values)
+                        st.dataframe(table, width="stretch")
+                        st.write(f"**Method:** {result['method']}")
+                        st.write(f"**Chi-square:** {result['chi2']:.4f}")
+                        st.write(f"**P-value:** {result['p_value']:.6f}")
+                        st.write(f"**Degrees of freedom:** {result['dof']}")
+                        st.write(f"**Cramér's V (effect size):** {result['cramers_v']:.3f}")
+                        if result["note"]:
+                            st.warning(result["note"])
+
+        except ValueError as error:
+            st.error(f"This test cannot be run on the selected data: {error}")
+        except Exception as error:
+            st.error(
+                "Something unexpected went wrong while running this test. "
+                f"Please send this message to support: {error}"
+            )
 
 else:
     st.info("Upload a CSV, TSV, or Excel file to begin.")
