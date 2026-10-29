@@ -42,26 +42,48 @@ tabs = st.tabs([
 
 with tabs[0]:
 
+    from modules.figure_studio.data_loader import list_sheets
+    from modules.proteomics.parsers import load_proteomics_file, looks_unlogged, to_log2
+
     st.header("Upload Protein Intensity Matrix")
     st.caption(
-        "Rows = proteins (UniProt ID or gene symbol), columns = "
-        "samples, values = intensity. Same format as your "
-        "Transcriptomics count matrix."
+        "Accepted: MaxQuant proteinGroups.txt, DIA-NN report.pg_matrix.tsv, or any table "
+        "with proteins as rows and one numeric column per sample (CSV, TSV, TXT, Excel). "
+        "MaxQuant and DIA-NN files are cleaned and log2-transformed automatically."
     )
 
     uploaded = st.file_uploader("Upload dataset", type=["csv", "tsv", "txt", "xlsx"])
 
     if uploaded is not None:
 
+        data = None
+        info = {}
+
         try:
-            data = load_file(uploaded)
+            sheets = list_sheets(uploaded)
+            sheet = st.selectbox("Which Excel sheet?", sheets, key="prot_sheet") if len(sheets) > 1 else None
+            data, info = load_proteomics_file(uploaded, sheet_name=sheet)
         except Exception as error:
             st.error(f"Could not read this file: {error}")
-            data = None
 
         if data is not None:
-            for note in data.attrs.get("notes", []):
+
+            for note in info.get("notes", []):
                 st.caption(f"ℹ️ {note}")
+
+            if info.get("format") != "generic table":
+                st.success(f"Recognised: {info['format']}")
+                details = [f"intensity used: {info.get('intensity_used', 'run columns')}"]
+                for key, label in (
+                    ("removed_reverse_hits", "reverse hits"),
+                    ("removed_potential_contaminants", "contaminants"),
+                    ("removed_only_identified_by_site", "'only identified by site'"),
+                    ("removed_never_measured", "proteins never measured"),
+                ):
+                    if info.get(key):
+                        details.append(f"{info[key]} {label} removed")
+                details.append("values converted to log2 (a 0 means 'not measured' and became a missing value)")
+                st.caption(" · ".join(details))
 
             n_samples_found = len(detect_sample_columns(data))
 
@@ -72,6 +94,16 @@ with tabs[0]:
                     "columns (two groups with replicates)."
                 )
             else:
+                sample_columns = detect_sample_columns(data)
+
+                if info.get("format") == "generic table" and looks_unlogged(data, sample_columns):
+                    st.warning(
+                        "These values look like raw intensities (very large numbers). "
+                        "Statistical tests on raw intensities are misleading; log2 transformation is standard."
+                    )
+                    if st.checkbox("Apply log2 transformation (recommended)", value=True, key="prot_log2"):
+                        data = to_log2(data, sample_columns)
+
                 st.session_state.proteomics_dataset = data
                 st.success(f"Uploaded: {len(data)} proteins, {n_samples_found} samples")
                 display_results_table(data, "prot_upload", default_index=4)
@@ -242,7 +274,7 @@ with tabs[3]:
                 if de is not None and de_results is not None:
                     st.session_state.proteomics_de_results = de_results
                     st.session_state.proteomics_de_groups = (group_a, group_b)
-                
+                    st.session_state.proteomics_de_kind = "two_group"
 
                     st.success(f"{int(de_results['Significant'].sum())} significant proteins")
                     display_results_table(de_results, "prot_de")
@@ -278,6 +310,12 @@ with tabs[3]:
                                 mime="text/csv", key="prot_only_one_dl"
                             )
 
+                    st.info(
+                        "Next step: open **Proteomics Discovery** in the sidebar to turn these "
+                        "results into a ranked target shortlist, protein profiles, interaction "
+                        "networks, 3D structures and dose-response analysis."
+                    )
+
                     plot_factory = PlotFactory(de.df)
                     render_editable_plot(plot_factory.volcano_plot(de_results), "tx_volcano", default_title="Volcano plot")
 
@@ -294,13 +332,21 @@ with tabs[3]:
             if len(set(valid_map.values())) >= 2 and st.button("Run ANOVA", key="prot_anova_run"):
 
                 try:
-                    mgde = MultiGroupDE(data, valid_map, protein_column, already_normalized=True)
-                    anova_results = mgde.run()
+                    new_engine = MultiGroupDE(data, valid_map, protein_column, already_normalized=True)
+                    new_results = new_engine.run()
 
-                    st.session_state.proteomics_de_results = anova_results
-                    st.session_state.proteomics_multi_de_engine = mgde
+                    st.session_state.proteomics_de_results = new_results
+                    st.session_state.proteomics_multi_de_engine = new_engine
+                    st.session_state.proteomics_de_kind = "anova"
                 except ValueError as error:
                     st.error(f"ANOVA cannot be run: {error}")
+
+            # results live in session_state, so they stay visible when you touch any dropdown below
+            mgde = st.session_state.get("proteomics_multi_de_engine")
+
+            if st.session_state.get("proteomics_de_kind") == "anova" and mgde is not None:
+
+                anova_results = st.session_state.proteomics_de_results
 
                 st.success(f"{int(anova_results['Significant'].sum())} significant proteins")
                 display_results_table(anova_results, "prot_anova")
@@ -337,7 +383,7 @@ with tabs[3]:
                         render_editable_plot(
                             plot_factory.top_genes_heatmap(expr_matrix),
                             "prot_anova_heatmap",
-                            default_title="Heatmap of Top Genes"
+                            default_title="Heatmap of Top Proteins"
                         )
 
                 if selected_protein:
@@ -347,12 +393,20 @@ with tabs[3]:
                     render_editable_plot(
                         plot_factory.gene_boxplot(expression_table, selected_protein),
                         "prot_anova_box",
-                        default_title="Boxplot of Gene Expression"
+                        default_title="Boxplot of Protein Abundance"
                     )
 
                     st.caption("Tukey HSD pairwise comparison:")
                     posthoc_table = mgde.posthoc(selected_protein)
-                    st.dataframe(posthoc_table)
+                    if posthoc_table is None:
+                        st.info("Not enough valid values for this protein to run Tukey HSD.")
+                    else:
+                        st.dataframe(posthoc_table)
+
+                st.info(
+                    "Next step: open **Proteomics Discovery** in the sidebar for the ranked "
+                    "shortlist, protein profiles, interactions and structures."
+                )
     else:
         st.info("Complete Normalization first.")
 

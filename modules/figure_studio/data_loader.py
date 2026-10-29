@@ -32,6 +32,15 @@ _NUMBER_WITH_COMMA_DECIMAL = re.compile(r"^-?\d+,\d+$")
 _NUMBER_WITH_THOUSANDS = re.compile(r"^-?\d{1,3}(,\d{3})+(\.\d+)?$")
 
 
+def _is_text_column(series):
+    """True for text columns in every pandas version.
+    (pandas 3 stores text as a new 'str' type, so `dtype == object` is no longer enough.)"""
+    return (
+        pd.api.types.is_object_dtype(series)
+        or pd.api.types.is_string_dtype(series)
+    ) and not pd.api.types.is_bool_dtype(series)
+
+
 def _try_numeric(series):
     """
     Returns (numeric_series, how) if a text column is really numbers stored
@@ -103,7 +112,7 @@ def clean_dataframe(dataframe):
     df.columns = new_names
 
     for col in df.columns:
-        if df[col].dtype == object:
+        if _is_text_column(df[col]):
             df[col] = df[col].map(lambda v: v.strip() if isinstance(v, str) else v)
             df[col] = df[col].replace("", np.nan)
 
@@ -116,7 +125,7 @@ def clean_dataframe(dataframe):
         )
 
     for col in df.columns:
-        if df[col].dtype == object:
+        if _is_text_column(df[col]):
             converted, how = _try_numeric(df[col])
             if converted is not None:
                 df[col] = converted
@@ -187,3 +196,5 @@ def load_file(uploaded_file, sheet_name=None):
 
     df.attrs["notes"] = notes
     return df
+
+# END OF FILE: modules/figure_studio/data_loader.py
