@@ -17,3 +17,4 @@ kaleido>=1.0.0
 plotly==7.1.0
 supabase>=2.9.0
 sentry-sdk>=2.0.0
+requests>=2.31.0

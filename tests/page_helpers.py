@@ -81,7 +81,7 @@ class PageDriver:
     def text(self):
         parts = []
         for group in (self.at.error, self.at.warning, self.at.info, self.at.success,
-                      self.at.markdown, self.at.caption):
+                      self.at.markdown, self.at.caption, self.at.subheader, self.at.header, self.at.title):
             parts += [str(e.value) for e in group]
         return " ".join(parts)
 

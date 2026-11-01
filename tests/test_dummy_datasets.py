@@ -107,4 +107,4 @@ def test_proteomics_4_european_format_file_loads_cleanly():
     path = os.path.join(D, "Proteomics_4_messy_semicolon_decimal_comma.csv")
     df = load_file(Upload(open(path, "rb").read(), "Proteomics_4_messy_semicolon_decimal_comma.csv"))
     assert df.shape == (300, 18)
-    assert len(detect_sample_columns(df)) == 16 and df["Description"].dtype == object
+    assert len(detect_sample_columns(df)) == 16 and pd.api.types.is_string_dtype(df["Description"])
