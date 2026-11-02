@@ -451,3 +451,88 @@ def test_candidates_work_for_anova_results_and_uniprot_hand_off():
 def test_no_significant_proteins_gives_an_empty_but_valid_table():
     de = pd.DataFrame({"Gene": ["A"], "Log2FC": [0.1], "Adj_P_Value": [0.9], "Significant": [False]})
     assert candidates.rank_candidates(de).empty
+
+
+# ====================================================================== real-world input: PDB codes and honest errors
+class _FakeResponse:
+    def __init__(self, status, text="", payload=None):
+        self.status_code, self.text, self._payload = status, text, payload
+
+    def json(self):
+        if self._payload is None:
+            raise ValueError("not json")
+        return self._payload
+
+
+def test_http_error_reports_the_real_status_code_and_not_a_fake_internet_problem(monkeypatch):
+    import requests
+    monkeypatch.setattr(requests, "get", lambda *a, **k: _FakeResponse(400, "Invalid query syntax"))
+    data, err = ann._get("https://rest.uniprot.org/uniprotkb/search")
+    assert data is None and "HTTP 400" in err and "Invalid query syntax" in err
+    assert "internet" not in err.lower()
+
+
+def test_rate_limit_and_unreadable_reply_have_their_own_messages(monkeypatch):
+    import requests
+    monkeypatch.setattr(requests, "get", lambda *a, **k: _FakeResponse(429))
+    assert "limiting requests" in ann._get("u")[1]
+    monkeypatch.setattr(requests, "get", lambda *a, **k: _FakeResponse(200, "<html>", payload=None))
+    assert "could not be read" in ann._get("u")[1]
+    monkeypatch.setattr(requests, "get", lambda *a, **k: _FakeResponse(200, "ATOM ...", payload=None))
+    assert ann._get("u", as_json=False) == ("ATOM ...", None)
+
+
+def test_pdb_codes_are_recognised():
+    assert all(ann.looks_like_pdb_id(x) for x in ("7CR5", "7cr5", "1M17", " 6vxx "))
+    assert not any(ann.looks_like_pdb_id(x) for x in ("EGFR", "P00533", "TP53", "AB12", "7CR", "7CR55", ""))
+
+
+PDBE_JSON = {"7cr5": {"UniProt": {"P0DTC2": {"identifier": "SPIKE_SARS2", "mappings": []},
+                                  "Q9BYF1": {"identifier": "ACE2_HUMAN", "mappings": []}}}}
+
+
+def test_pdb_code_is_translated_to_uniprot_ids_using_the_lowercase_code(monkeypatch):
+    seen = []
+    def fake(url, params=None, as_json=True, timeout=25):
+        seen.append(url)
+        return PDBE_JSON, None
+    monkeypatch.setattr(ann, "_get", fake)
+    assert ann.uniprot_from_pdb("7CR5") == (["P0DTC2", "Q9BYF1"], None)
+    assert seen == ["https://www.ebi.ac.uk/pdbe/api/mappings/uniprot/7cr5"]
+    assert ann.resolve_uniprot("7cr5") == ("P0DTC2", None)
+
+
+def test_pdb_entry_without_a_protein_gives_a_clear_message(monkeypatch):
+    monkeypatch.setattr(ann, "_get", lambda *a, **k: ({"1abc": {}}, None))
+    ids, err = ann.uniprot_from_pdb("1abc")
+    assert ids == [] and "no UniProt-mapped protein" in err
+
+
+def test_a_gene_that_looks_like_a_pdb_code_still_falls_back_to_the_gene_search(monkeypatch):
+    def fake(url, params=None, as_json=True, timeout=25):
+        if "pdbe" in url:
+            return None, "Not found in this database."
+        return {"results": [{"primaryAccession": "Q99999"}]}, None
+    monkeypatch.setattr(ann, "_get", fake)
+    assert ann.resolve_uniprot("1B4G") == ("Q99999", None)
+
+
+def test_gene_symbols_are_searched_in_capitals_and_a_rejected_search_is_explained(monkeypatch):
+    sent = {}
+    def ok(url, params=None, **k):
+        sent.update(params or {})
+        return {"results": [{"primaryAccession": "P00533"}]}, None
+    monkeypatch.setattr(ann, "_get", ok)
+    ann.resolve_uniprot("egfr")
+    assert "gene_exact:EGFR" in sent["query"]
+    monkeypatch.setattr(ann, "_get", lambda *a, **k: (None, "The database answered with an error (HTTP 400): bad"))
+    assert "Type a gene symbol" in ann.resolve_uniprot("!!!")[1]
+
+
+def test_fetch_pdb_text_validates_the_code_and_explains_a_missing_file(monkeypatch):
+    assert "4 characters" in ann.fetch_pdb_text("EGFR")[1]
+    seen = []
+    monkeypatch.setattr(ann, "_get", lambda url, **k: (seen.append(url) or "ATOM", None))
+    assert ann.fetch_pdb_text("1m17") == ("ATOM", None) and seen == ["https://files.rcsb.org/download/1M17.pdb"]
+    monkeypatch.setattr(ann, "_get", lambda *a, **k: (None, "Not found in this database."))
+    assert "mmCIF" in ann.fetch_pdb_text("7cr5")[1]

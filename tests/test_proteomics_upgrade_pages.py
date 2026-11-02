@@ -112,6 +112,11 @@ def fake_network(monkeypatch, record=None):
     def fake_get(url, params=None, as_json=True, timeout=25):
         if record is not None:
             record.append((url, params))
+        if "pdbe/api/mappings/uniprot" in url:
+            code = url.rsplit("/", 1)[1]
+            return {code: {"UniProt": {"P00533": {"identifier": "EGFR_HUMAN", "mappings": []}}}}, None
+        if "files.rcsb.org" in url:
+            return REMARKS + build_backbone_pdb([(-57.0, -47.0)] * 25), None
         if "/search" in url:
             return {"results": [{"primaryAccession": "P00533"}]}, None
         if url.endswith(".json") and "uniprotkb" in url:
@@ -216,3 +221,59 @@ def test_dose_response_with_too_few_concentrations_warns_instead_of_crashing(env
     csv = "Concentration,Response\n1,90\n1,88\n10,50\n10,52\n100,10\n100,12\n"
     d = discovery(with_results=False, uploads={"Dose-response table (CSV / TSV / Excel)": (csv.encode(), "dr.csv")}); ok(d)
     assert "at least 4" in d.text()
+
+
+def test_typing_a_pdb_code_finds_the_protein_instead_of_failing(env, monkeypatch):
+    """The exact thing that went wrong on the live site: the user typed 7cr5."""
+    calls = []
+    fake_network(monkeypatch, calls)
+    d = discovery(with_results=False)
+    d.set_text("disc_typed", "7cr5"); ok(d)
+    assert "PDB entry 7CR5 → UniProt P00533" in d.text()
+    d.click_key("disc_profile_btn"); ok(d)
+    assert "Epidermal growth factor receptor" in d.text()
+    assert not any("/search" in url for url, _ in calls)
+
+
+def test_a_pdb_code_with_several_proteins_lets_the_user_choose(env, monkeypatch):
+    def fake(url, params=None, as_json=True, timeout=25):
+        if "pdbe/api/mappings/uniprot" in url:
+            return {"7cr5": {"UniProt": {"P0DTC2": {}, "Q9BYF1": {}}}}, None
+        return UNIPROT_ENTRY, None
+    monkeypatch.setattr(ann, "_get", fake)
+    d = discovery(with_results=False)
+    d.set_text("disc_typed", "7cr5"); ok(d)
+    pick = d.at.selectbox(key="disc_pdb_pick_7cr5")
+    assert list(pick.options) == ["P0DTC2", "Q9BYF1"]
+
+
+def test_a_server_error_is_shown_with_its_http_code(env, monkeypatch):
+    monkeypatch.setattr(ann, "_get", lambda *a, **k: (None, "The database answered with an error (HTTP 503): maintenance"))
+    d = discovery(with_results=False)
+    d.set_text("disc_typed", "EGFR"); d.click_key("disc_profile_btn"); ok(d)
+    assert "HTTP 503" in d.text() and "maintenance" in d.text()
+
+
+def test_structure_can_be_fetched_by_pdb_code_and_analysed(env, monkeypatch):
+    fake_network(monkeypatch)
+    d = discovery(with_results=False)
+    d.set_text("disc_pdb_code", "1m17"); d.click_key("disc_pdb_fetch"); ok(d)
+    values = {m.label: str(m.value) for m in d.at.metric}
+    assert values["Resolution"] == "1.8 Å" and values["Favoured (approx.)"] == "100.0%"
+    assert "Showing PDB entry 1M17" in d.text()
+
+
+def test_structure_fetch_failure_is_explained_not_crashed(env, monkeypatch):
+    monkeypatch.setattr(ann, "_get", lambda *a, **k: (None, "Not found in this database."))
+    d = discovery(with_results=False)
+    d.set_text("disc_pdb_code", "7cr5"); d.click_key("disc_pdb_fetch"); ok(d)
+    assert "mmCIF" in d.text()
+
+
+def test_interaction_network_looks_up_the_gene_symbol_when_only_a_uniprot_id_is_known(env, monkeypatch):
+    seen = []
+    fake_network(monkeypatch, seen)
+    d = discovery(with_results=False)
+    d.set_text("disc_typed", "P00533"); d.click_key("disc_string_btn"); ok(d)
+    string_calls = [params for url, params in seen if "string-db.org" in url]
+    assert string_calls and string_calls[0]["identifiers"].split("\r")[0] == "EGFR"
