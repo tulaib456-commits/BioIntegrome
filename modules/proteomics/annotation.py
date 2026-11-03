@@ -20,6 +20,9 @@ from modules.proteomics.parsers import first_accession
 UNIPROT = "https://rest.uniprot.org/uniprotkb"
 STRING = "https://string-db.org/api/json"
 ALPHAFOLD = "https://alphafold.ebi.ac.uk/api/prediction"
+PDBE = "https://www.ebi.ac.uk/pdbe/api"
+RCSB_FILES = "https://files.rcsb.org/download"
+RCSB_DATA = "https://data.rcsb.org/rest/v1/core"
 HEADERS = {"User-Agent": "BioAI/1.0 (research tool)", "Accept": "application/json"}
 
 
@@ -30,30 +33,88 @@ def _get(url, params=None, as_json=True, timeout=25):
         import requests
 
         response = requests.get(url, params=params, headers=HEADERS, timeout=timeout)
-        if response.status_code == 404:
-            return None, "Not found in this database."
-        response.raise_for_status()
-        return (response.json() if as_json else response.text), None
     except Exception as error:                              # noqa: BLE001
-        return None, f"Could not reach the database ({type(error).__name__}). Check the server's internet access and try again."
+        return None, (
+            f"Could not reach the database ({type(error).__name__}). "
+            "Check the server's internet access and try again."
+        )
+
+    if response.status_code == 404:
+        return None, "Not found in this database."
+    if response.status_code == 429:
+        return None, "The database is limiting requests (HTTP 429). Wait a minute and try again."
+    if response.status_code >= 400:
+        snippet = " ".join((response.text or "").split())[:160]
+        return None, f"The database answered with an error (HTTP {response.status_code}): {snippet}"
+
+    if not as_json:
+        return response.text, None
+    try:
+        return response.json(), None
+    except ValueError:
+        return None, "The database returned a reply that could not be read."
 
 
 # ------------------------------------------------------------------ UniProt
+def looks_like_pdb_id(text):
+    """PDB codes are 4 characters: a digit then 3 letters/digits (e.g. 7CR5, 1M17)."""
+    return bool(re.fullmatch(r"[0-9][A-Za-z0-9]{3}", (text or "").strip()))
+
+
+def uniprot_from_pdb(pdb_id):
+    """PDB code -> list of UniProt accessions of the proteins in that structure (via PDBe/SIFTS)."""
+    pdb_id = (pdb_id or "").strip().lower()                  # PDBe only accepts lowercase codes
+    data, error = _get(f"{PDBE}/mappings/uniprot/{pdb_id}")
+    if error:
+        return [], error
+    mapping = (data or {}).get(pdb_id, {}).get("UniProt", {})
+    if not mapping:
+        return [], "This PDB entry has no UniProt-mapped protein (for example it contains only DNA/RNA)."
+    return list(mapping.keys()), None
+
+
+def fetch_pdb_text(pdb_id, max_bytes=30_000_000):
+    """Classic PDB-format file of an experimental structure from RCSB."""
+    if not looks_like_pdb_id(pdb_id):
+        return None, "A PDB code has 4 characters, for example 7CR5 or 1M17."
+    text, error = _get(f"{RCSB_FILES}/{pdb_id.strip().upper()}.pdb", as_json=False, timeout=60)
+    if error and "Not found" in error:
+        return None, (
+            "RCSB has no classic PDB-format file for this code. Very large structures are only "
+            "distributed as mmCIF, which this tool cannot read yet."
+        )
+    if error:
+        return None, error
+    if len(text) > max_bytes:
+        return None, "This structure file is too large to analyse here."
+    return text, None
+
+
 def resolve_uniprot(query, organism=9606):
-    """Gene symbol or accession -> UniProt accession (reviewed human entry first)."""
+    """UniProt accession, PDB code or gene symbol -> UniProt accession (reviewed human entry first)."""
     query = (query or "").strip()
     if not query:
-        return None, "Enter a UniProt ID or gene symbol."
+        return None, "Enter a UniProt ID, PDB code or gene symbol."
 
     accession = first_accession(query)
     if accession and accession == query.split("-")[0]:
         return accession, None
 
+    if looks_like_pdb_id(query):
+        accessions, _ = uniprot_from_pdb(query)
+        if accessions:
+            return accessions[0], None
+
     data, error = _get(
         f"{UNIPROT}/search",
-        {"query": f"(gene_exact:{query}) AND (organism_id:{organism}) AND (reviewed:true)",
+        {"query": f"(gene_exact:{query.upper()}) AND (organism_id:{organism}) AND (reviewed:true)",
          "format": "json", "size": 1, "fields": "accession"},
     )
+    if error and "HTTP 400" in error:
+        return None, (
+            f"UniProt could not use '{query}' as a search. Type a gene symbol (for example EGFR), "
+            "a UniProt ID (for example P00533) or a 4-character PDB code (for example 7CR5)."
+        )
     if error:
         return None, error
     results = (data or {}).get("results", [])

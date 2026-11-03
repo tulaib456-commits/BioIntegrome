@@ -58,12 +58,35 @@ with col_pick:
         help="Filled after you run Differential Expression on the Proteomics page."
     )
 with col_type:
-    typed = st.text_input("…or type a UniProt ID / gene symbol", key="disc_typed", placeholder="e.g. EGFR or P00533")
+    typed = st.text_input(
+        "…or type a gene symbol, UniProt ID or PDB code", key="disc_typed",
+        placeholder="e.g. EGFR, P00533 or 7CR5"
+    )
 
 query = typed.strip() or ("" if picked == "(none)" else picked)
 
 known_id = None
-if query and shortlist is not None and "UniProt_ID" in shortlist.columns:
+
+# a PDB code (4 characters, e.g. 7CR5) -> the UniProt protein(s) in that structure
+if query and ann.looks_like_pdb_id(query):
+    pdb_cache = st.session_state.setdefault("disc_pdb_map", {})
+    if query.lower() not in pdb_cache:
+        pdb_cache[query.lower()] = ann.uniprot_from_pdb(query)
+    pdb_accessions, pdb_error = pdb_cache[query.lower()]
+    if pdb_accessions:
+        if len(pdb_accessions) > 1:
+            known_id = st.selectbox(
+                f"PDB entry {query.upper()} contains {len(pdb_accessions)} different proteins. Which one?",
+                pdb_accessions, key=f"disc_pdb_pick_{query.lower()}"
+            )
+        else:
+            known_id = pdb_accessions[0]
+        st.caption(
+            f"PDB entry {query.upper()} → UniProt {known_id}. "
+            "To analyse the structure itself, use tab 5 and fetch it by its PDB code."
+        )
+
+if known_id is None and query and shortlist is not None and "UniProt_ID" in shortlist.columns:
     hit = shortlist.loc[shortlist["Protein"] == query, "UniProt_ID"].dropna()
     known_id = hit.iloc[0] if len(hit) else None
 query_for_lookup = known_id or first_accession(query) or query.split(" (")[0].strip()
@@ -189,12 +212,13 @@ with tabs[2]:
 
         if st.button("Build interaction network", key="disc_string_btn"):
             focus = query_for_lookup
-            if not first_accession(query_for_lookup) == query_for_lookup:
-                focus = query_for_lookup                           # gene symbol is what STRING wants
-            else:
-                profile_result = st.session_state.get("disc_profile_result")
-                if profile_result and profile_result[1]:
-                    focus = profile_result[1]["gene"] or focus
+            if first_accession(query_for_lookup) == query_for_lookup:      # STRING wants the gene symbol
+                known = st.session_state.get("disc_profile_result")
+                gene = known[1]["gene"] if known and known[0] == query and known[1] else None
+                if not gene:
+                    looked_up, _ = ann.fetch_uniprot_profile(query_for_lookup)
+                    gene = looked_up["gene"] if looked_up else None
+                focus = gene or focus
             genes = [focus]
             if include_mine:
                 genes += [p.split(" (")[0] for p in significant_proteins if p != query][:30]
@@ -273,12 +297,33 @@ with tabs[3]:
 # ================================================================== 5. own structure
 with tabs[4]:
     st.header("Analyse my structure (X-ray / cryo-EM / NMR / model)")
-    st.caption("Upload a PDB-format file (.pdb / .ent). Quality numbers come from the file header; "
-               "angles and B-factors are calculated here.")
-    pdb_file = st.file_uploader("PDB file", type=["pdb", "ent", "txt"], key="disc_pdb_upload")
+    st.caption("Upload a PDB-format file (.pdb / .ent) or fetch an experimental structure by its PDB code. "
+               "Quality numbers come from the file header; angles and B-factors are calculated here.")
+
+    col_file, col_code = st.columns(2)
+    with col_file:
+        pdb_file = st.file_uploader("PDB file", type=["pdb", "ent", "txt"], key="disc_pdb_upload")
+    with col_code:
+        pdb_code = st.text_input("…or a PDB code (fetched from RCSB)", key="disc_pdb_code", placeholder="e.g. 1M17")
+        if st.button("Fetch structure", key="disc_pdb_fetch"):
+            fetched_text, fetch_error = ann.fetch_pdb_text(pdb_code)
+            st.session_state["disc_pdb_fetched"] = (pdb_code.strip().upper(), fetched_text, fetch_error)
+
+    structure_text = None
     if pdb_file is not None:
+        structure_text = pdb_file.getvalue().decode("utf-8", errors="ignore")
+    else:
+        fetched = st.session_state.get("disc_pdb_fetched")
+        if fetched:
+            if fetched[2]:
+                st.warning(fetched[2])
+            elif fetched[1]:
+                structure_text = fetched[1]
+                st.caption(f"Showing PDB entry {fetched[0]} (source: RCSB Protein Data Bank).")
+
+    if structure_text is not None:
+        text = structure_text
         try:
-            text = pdb_file.getvalue().decode("utf-8", errors="ignore")
             atoms = stc.parse_pdb_text(text)
         except ValueError as error:
             st.error(str(error))
