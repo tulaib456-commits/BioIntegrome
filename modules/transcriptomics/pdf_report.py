@@ -10,7 +10,7 @@ class PDFReport(FPDF):
     def header(self):
         self.set_font("Helvetica", "B", 14)
         self.set_text_color(30, 30, 60)
-        self.cell(0, 10, "BioAI Transcriptomics Report", ln=True, align="C")
+        self.cell(0, 10, "Biointegrome Transcriptomics Report", ln=True, align="C")
         self.set_font("Helvetica", "", 9)
         self.set_text_color(120, 120, 120)
         self.cell(0, 6, datetime.now().strftime("Generated %Y-%m-%d %H:%M"), ln=True, align="C")

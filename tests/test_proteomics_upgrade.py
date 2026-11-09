@@ -487,32 +487,70 @@ def test_pdb_codes_are_recognised():
     assert not any(ann.looks_like_pdb_id(x) for x in ("EGFR", "P00533", "TP53", "AB12", "7CR", "7CR55", ""))
 
 
-PDBE_JSON = {"7cr5": {"UniProt": {"P0DTC2": {"identifier": "SPIKE_SARS2", "mappings": []},
-                                  "Q9BYF1": {"identifier": "ACE2_HUMAN", "mappings": []}}}}
+def rcsb_fake(entry_ok=True, entities=None, pdbe=None, calls=None):
+    """Recorded-format stand-in for RCSB (entry + polymer_entity) and PDBe."""
+    entities = entities if entities is not None else {
+        "1": ("Spike glycoprotein", ["P0DTC2"]), "2": ("Angiotensin-converting enzyme 2", ["Q9BYF1"])}
 
-
-def test_pdb_code_is_translated_to_uniprot_ids_using_the_lowercase_code(monkeypatch):
-    seen = []
     def fake(url, params=None, as_json=True, timeout=25):
-        seen.append(url)
-        return PDBE_JSON, None
-    monkeypatch.setattr(ann, "_get", fake)
+        if calls is not None:
+            calls.append(url)
+        if "data.rcsb.org/rest/v1/core/entry/" in url:
+            if entry_ok is not True:
+                return None, entry_ok if isinstance(entry_ok, str) else "The database answered with an error (HTTP 503): down"
+            return {"rcsb_entry_container_identifiers": {"polymer_entity_ids": list(entities)}}, None
+        if "polymer_entity/" in url:
+            entity_id = url.rsplit("/", 1)[1]
+            desc, ids = entities[entity_id]
+            return {"rcsb_polymer_entity_container_identifiers": {"uniprot_ids": ids},
+                    "rcsb_polymer_entity": {"pdbx_description": desc}}, None
+        if "pdbe/api/mappings/uniprot" in url:
+            return pdbe if pdbe is not None else (None, "Not found in this database.")
+        return None, "Not found in this database."
+    return fake
+
+
+def test_pdb_code_is_translated_through_rcsb_with_protein_names(monkeypatch):
+    calls = []
+    monkeypatch.setattr(ann, "_get", rcsb_fake(calls=calls))
+    proteins, err = ann.pdb_entry_proteins("7cr5")
+    assert err is None
+    assert [(p["accession"], p["description"]) for p in proteins] == [
+        ("P0DTC2", "Spike glycoprotein"), ("Q9BYF1", "Angiotensin-converting enzyme 2")]
+    assert calls[0] == "https://data.rcsb.org/rest/v1/core/entry/7CR5"
     assert ann.uniprot_from_pdb("7CR5") == (["P0DTC2", "Q9BYF1"], None)
-    assert seen == ["https://www.ebi.ac.uk/pdbe/api/mappings/uniprot/7cr5"]
     assert ann.resolve_uniprot("7cr5") == ("P0DTC2", None)
 
 
-def test_pdb_entry_without_a_protein_gives_a_clear_message(monkeypatch):
-    monkeypatch.setattr(ann, "_get", lambda *a, **k: ({"1abc": {}}, None))
-    ids, err = ann.uniprot_from_pdb("1abc")
-    assert ids == [] and "no UniProt-mapped protein" in err
+def test_pdbe_is_used_as_a_backup_when_rcsb_fails(monkeypatch):
+    pdbe = ({"7cr5": {"UniProt": {"P0DTC2": {"name": "SPIKE_SARS2"}}}}, None)
+    monkeypatch.setattr(ann, "_get", rcsb_fake(entry_ok=False, pdbe=pdbe))
+    assert ann.uniprot_from_pdb("7cr5") == (["P0DTC2"], None)
+
+
+def test_when_every_route_fails_the_reasons_are_reported_and_no_gene_search_is_attempted(monkeypatch):
+    calls = []
+    monkeypatch.setattr(ann, "_get", rcsb_fake(entry_ok=False, pdbe=(None, "The database answered with an error (HTTP 410): gone"), calls=calls))
+    acc, err = ann.resolve_uniprot("7CR5")
+    assert acc is None and "Could not find the protein of PDB entry 7CR5" in err
+    assert "RCSB: " in err and "HTTP 503" in err and "PDBe: " in err and "HTTP 410" in err
+    assert not any("/search" in c for c in calls)
+
+
+def test_an_entry_without_a_protein_is_explained(monkeypatch):
+    monkeypatch.setattr(ann, "_get", rcsb_fake(entities={"1": ("DNA (5'-D(*CP*G)-3')", [])}))
+    proteins, err = ann.pdb_entry_proteins("1abc")
+    assert proteins == [] and "no UniProt-mapped protein" in err
+    acc, message = ann.resolve_uniprot("1abc")
+    assert acc is None and "no UniProt-mapped protein" in message
 
 
 def test_a_gene_that_looks_like_a_pdb_code_still_falls_back_to_the_gene_search(monkeypatch):
+    base = rcsb_fake(entry_ok="Not found in this database.")
     def fake(url, params=None, as_json=True, timeout=25):
-        if "pdbe" in url:
-            return None, "Not found in this database."
-        return {"results": [{"primaryAccession": "Q99999"}]}, None
+        if "/search" in url:
+            return {"results": [{"primaryAccession": "Q99999"}]}, None
+        return base(url, params, as_json, timeout)
     monkeypatch.setattr(ann, "_get", fake)
     assert ann.resolve_uniprot("1B4G") == ("Q99999", None)
 

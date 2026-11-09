@@ -112,9 +112,11 @@ def fake_network(monkeypatch, record=None):
     def fake_get(url, params=None, as_json=True, timeout=25):
         if record is not None:
             record.append((url, params))
-        if "pdbe/api/mappings/uniprot" in url:
-            code = url.rsplit("/", 1)[1]
-            return {code: {"UniProt": {"P00533": {"identifier": "EGFR_HUMAN", "mappings": []}}}}, None
+        if "data.rcsb.org/rest/v1/core/entry/" in url:
+            return {"rcsb_entry_container_identifiers": {"polymer_entity_ids": ["1"]}}, None
+        if "data.rcsb.org/rest/v1/core/polymer_entity/" in url:
+            return {"rcsb_polymer_entity_container_identifiers": {"uniprot_ids": ["P00533"]},
+                    "rcsb_polymer_entity": {"pdbx_description": "Epidermal growth factor receptor"}}, None
         if "files.rcsb.org" in url:
             return REMARKS + build_backbone_pdb([(-57.0, -47.0)] * 25), None
         if "/search" in url:
@@ -236,15 +238,28 @@ def test_typing_a_pdb_code_finds_the_protein_instead_of_failing(env, monkeypatch
 
 
 def test_a_pdb_code_with_several_proteins_lets_the_user_choose(env, monkeypatch):
+    from tests.test_proteomics_upgrade import rcsb_fake
+    base = rcsb_fake()
     def fake(url, params=None, as_json=True, timeout=25):
-        if "pdbe/api/mappings/uniprot" in url:
-            return {"7cr5": {"UniProt": {"P0DTC2": {}, "Q9BYF1": {}}}}, None
-        return UNIPROT_ENTRY, None
+        if url.endswith(".json") and "uniprotkb" in url:
+            return UNIPROT_ENTRY, None
+        return base(url, params, as_json, timeout)
     monkeypatch.setattr(ann, "_get", fake)
     d = discovery(with_results=False)
     d.set_text("disc_typed", "7cr5"); ok(d)
-    pick = d.at.selectbox(key="disc_pdb_pick_7cr5")
-    assert list(pick.options) == ["P0DTC2", "Q9BYF1"]
+    options = list(d.at.selectbox(key="disc_pdb_pick_7cr5").options)
+    assert len(options) == 2 and "Spike glycoprotein" in options[0] and "P0DTC2" in options[0]
+
+
+def test_when_the_pdb_lookup_fails_the_page_shows_the_reason_instead_of_a_gene_search_message(env, monkeypatch):
+    """The live failure: 'No reviewed UniProt entry found for 7CR5' hid the real cause."""
+    from tests.test_proteomics_upgrade import rcsb_fake
+    monkeypatch.setattr(ann, "_get", rcsb_fake(entry_ok=False, pdbe=(None, "The database answered with an error (HTTP 410): gone")))
+    d = discovery(with_results=False)
+    d.set_text("disc_typed", "7CR5"); ok(d)
+    assert "Could not find the protein of PDB entry 7CR5" in d.text() and "HTTP 503" in d.text()
+    d.click_key("disc_profile_btn"); ok(d)
+    assert "No reviewed UniProt entry" not in d.text() and "HTTP 410" in d.text()
 
 
 def test_a_server_error_is_shown_with_its_http_code(env, monkeypatch):

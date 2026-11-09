@@ -10,7 +10,7 @@ class ReportGenerator:
 
         report = []
 
-        report.append("BIOAI DATASET REPORT")
+        report.append("BIOINTEGROME DATASET REPORT")
 
         report.append("=" * 40)
 

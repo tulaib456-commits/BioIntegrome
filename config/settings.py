@@ -1,4 +1,4 @@
-APP_NAME = "BioAI"
+APP_NAME = "Biointegrome"
 
 VERSION = "1.0"
 

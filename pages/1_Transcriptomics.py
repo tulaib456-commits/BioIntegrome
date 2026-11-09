@@ -76,7 +76,7 @@ st.set_page_config(
 
 SessionManager.initialize()
 
-st.title("🧬 BioAI Transcriptomics")
+st.title("🧬 Biointegrome Transcriptomics")
 
 tabs = st.tabs(
     [
@@ -1197,7 +1197,7 @@ with tabs[8]:
             st.download_button(
                 "Download PDF Report",
                 st.session_state.pdf_report_bytes,
-                file_name="BioAI_Report.pdf",
+                file_name="Biointegrome_Report.pdf",
                 mime="application/pdf"
             )
 
@@ -1205,7 +1205,7 @@ with tabs[8]:
         st.download_button(
             "Download PDF Report",
             st.session_state.pdf_report_bytes,
-            file_name="BioAI_Report.pdf",
+            file_name="Biointegrome_Report.pdf",
             mime="application/pdf",
             key="download_pdf_report"
         )
