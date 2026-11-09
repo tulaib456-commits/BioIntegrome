@@ -79,7 +79,7 @@ except Exception:
     pass
 
 st.set_page_config(
-    page_title="BioIntegrom",
+    page_title="BioIntegrome",
     page_icon="🧬",
     layout="wide")
 
