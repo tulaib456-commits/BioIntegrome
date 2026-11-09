@@ -127,7 +127,7 @@ def require_login():
     if st.session_state.get("logged_in_user") is not None:
         return
 
-    st.title("Biointegrome")
+    st.title("BioIntegrome")
 
     tab_login, tab_signup = st.tabs(["Log In", "Create Account"])
 
@@ -243,7 +243,7 @@ def require_active_plan(payment_link="[https://link.payoneer.com/Token?t=32224DA
     if has_active_plan(user["id"]):
         return
 
-    st.title("Biointegrome")
+    st.title("BioIntegrome")
     st.warning(
         "Your trial or subscription has ended. Renew to keep using "
         "this module."

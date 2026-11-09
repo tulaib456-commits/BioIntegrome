@@ -79,7 +79,7 @@ except Exception:
     pass
 
 st.set_page_config(
-    page_title="Biointegrome",
+    page_title="BioIntegrome",
     page_icon="🧬",
     layout="wide")
 
@@ -92,10 +92,10 @@ with st.sidebar:
         st.session_state.logged_in_user = None
         st.rerun()
 
-st.title("Biointegrome")
+st.title("BioIntegrome")
 st.markdown(
     """
-    # Welcome to Biointegrome
+    # Welcome to BioIntegrome
 
     Choose a module from the left sidebar.
     """

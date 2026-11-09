@@ -1,4 +1,4 @@
-APP_NAME = "Biointegrome"
+APP_NAME = "BioIntegrome"
 
 VERSION = "1.0"
 

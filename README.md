@@ -1,4 +1,4 @@
-Biointegrome
+BioIntegrome
 
 AI Powered Multiomics Platform
 
